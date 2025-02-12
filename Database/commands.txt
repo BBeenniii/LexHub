@@ -1,0 +1,8 @@
+export:
+mongoexport --uri="mongodb://localhost:27017/LexHub" --collection=messages --out=messages.json --jsonArray
+mongoexport --uri="mongodb://localhost:27017/LexHub" --collection=users --out=users.json --jsonArray
+
+
+import:
+mongoimport --uri="mongodb://localhost:27017/LexHub" --collection=messages --file=database/messages.json --jsonArray
+mongoimport --uri="mongodb://localhost:27017/LexHub" --collection=users --file=database/users.json --jsonArray
