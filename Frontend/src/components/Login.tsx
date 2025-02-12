@@ -23,36 +23,43 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="background">
-      <form className="login-form">
-        <h3>Bejelentkezés</h3>
-
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          placeholder="Email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label htmlFor="password">Jelszó:</label>
-        <input
-          type="password"
-          placeholder="Jelszó"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button className="buttonski" type="button" onClick={handleLogin}>Bejelentkezés</button>
-        {error && <p className="error">{error}</p>}
-        <div className="social">
-            <div className="go"><i className="fab fa-google"></i><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Google</a> </div>
-            <div className="fb"><i className="fab fa-facebook"></i><a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"> Facebook</a> </div>
-            <div className="ig"><i className="fab fa-instagram"></i><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"> Instagram</a> </div>
-        </div>
-      </form>
+    <div className="card mx-auto" style={{ maxWidth: "400px" }}>
+      <div className="card-body">
+        <h2 className="card-title text-center">Login</h2>
+        {isLoggedIn ? (
+          <div>
+            <p>You are already logged in.</p>
+            <button className="btn btn-danger w-100" onClick={handleLogout}>
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mb-3">
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <button className="btn btn-primary w-100" onClick={handleLogin}>
+              Login
+            </button>
+            {error && <p className="text-danger mt-3">{error}</p>}
+          </>
+        )}
+      </div>
     </div>
   );
 };
