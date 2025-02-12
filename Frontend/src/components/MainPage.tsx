@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Navbar.scss"; // Egyedi CSS importálása
+import "./Navbar.scss";
 
 const MainPage: React.FC = () => {
   return (
