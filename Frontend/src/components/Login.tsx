@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./login.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -27,53 +28,38 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_name");
-    navigate("/login");
-  };
-
-  const isLoggedIn = !!localStorage.getItem("token");
-
   return (
-    <div className="card mx-auto" style={{ maxWidth: "400px" }}>
-      <div className="card-body">
-        <h2 className="card-title text-center">Login</h2>
-        {isLoggedIn ? (
-          <div>
-            <p>You are already logged in.</p>
-            <button className="btn btn-danger w-100" onClick={handleLogout}>
-              Log Out
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="mb-3">
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button className="btn btn-primary w-100" onClick={handleLogin}>
-              Login
-            </button>
-            {error && <p className="text-danger mt-3">{error}</p>}
-          </>
-        )}
-      </div>
+    <div className="background">
+      <div className="shape"></div>
+      <div className="shape"></div>
+      <form>
+        <h3>Login Here</h3>
+
+        <label htmlFor="email">Email</label>
+        <input
+          type="text"
+          placeholder="Email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button className=" buttonski" type="button" onClick={handleLogin}>Log In</button>
+        {error && <p className="error">{error}</p>}
+        <div className="social">
+          <div className="go"><i className="fab fa-google"></i> Google</div>
+          <div className="fb"><i className="fab fa-facebook"></i> Facebook</div>
+        </div>
+      </form>
     </div>
   );
 };

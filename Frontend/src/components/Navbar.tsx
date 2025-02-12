@@ -1,23 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "./Navbar.scss"; // Egyedi CSS importálása
 
 const Navbar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          LexHub
+    <header>
+      <div className="container navbar">
+        <Link to="/" className="nav-link">
+          <h1 className="logo">LexHub</h1>
         </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span className="navbar-toggler-icon"></span>
+        <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
+          ☰
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
+        <nav className={isOpen ? "open" : ""}>
+          <ul>
             <li className="nav-item">
               <Link className="nav-link" to="/register">
                 Register
@@ -34,9 +32,9 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
           </ul>
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 };
 
