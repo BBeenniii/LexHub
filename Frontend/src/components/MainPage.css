@@ -1,0 +1,135 @@
+body {
+  background-color: #080710;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.main-page {
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  backdrop-filter: blur(10px);
+  width: 80%;
+  margin: auto;
+}
+
+.display-4 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+.lead {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 40px;
+  animation: fadeIn 2s ease-in-out 1s;
+}
+
+.features {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  width: 32%;
+  min-width: 250px;
+  box-shadow: 0 0 20px rgba(8, 7, 16, 0.6);
+  backdrop-filter: blur(5px);
+  text-align: left;
+}
+
+.feature h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-page {
+    width: 90%;
+  }
+
+  .feature {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+
+  .lead {
+    font-size: 1.2rem;
+  }
+
+  .feature {
+    width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .display-4 {
+    font-size: 2rem;
+  }
+
+  .lead {
+    font-size: 1rem;  
+  }
+
+  .feature {
+    width: 100%;
+  }
+}
+
+@media (max-width: 320px) {
+  .display-4 {
+    font-size: 1.5rem;
+  }
+
+  .lead {
+    font-size: 0.9rem;
+  }
+
+  .feature {
+    padding: 10px;
+  }
+}
