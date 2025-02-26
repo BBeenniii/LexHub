@@ -12,7 +12,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Navbar />
-      <div className="container mt-4">
+      <div className=" mt-4">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/register" element={<Register />} />
