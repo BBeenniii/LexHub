@@ -7,6 +7,13 @@ const { v4: uuidv4 } = require("uuid");
 const User = require("./models/User");
 const Message = require("./models/Message");
 const router = express.Router();
+require("dotenv").config();
+const axios = require("axios");
+const { OpenAI } = require("openai");
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 const app = express();
 const PORT = 3001;
@@ -100,7 +107,6 @@ app.post("/messages", async (req, res) => {
 });
 
 // Üzenetek lekérdezése két user között
-// Üzenetek lekérdezése két user között
 app.get("/messages/:sender_id/:receiver_id", async (req, res) => {
     const { sender_id, receiver_id } = req.params;
   
@@ -123,7 +129,7 @@ app.get("/messages/:sender_id/:receiver_id", async (req, res) => {
 // Végpont a felhasználók listázásához
 router.get("/users", async (req, res) => {
   try {
-    const users = await User.find({}, "name _id"); // Csak a nevet és az _id-t kérjük
+    const users = await User.find({}, "name _id");
     res.status(200).json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -146,6 +152,75 @@ app.get("/users", async (req, res) => {
   });
   
 
+// AI Chat endpoint
+const lawyer_types = [
+  "Büntetőjogász",
+  "Védőügyvéd",
+  "Polgári jogász",
+  "Ingatlanjogász",
+  "Munkajogász",
+  "Családjogi ügyvéd",
+  "Kártérítési ügyvéd",
+  "Közigazgatási jogász",
+  "Alkotmányjogász",
+  "Nemzetközi jogász",
+  "Kereskedelmi jogász",
+  "Adójogász",
+  "Versenyjogász",
+  "Szellemi tulajdonjogász",
+  "Közbeszerzési jogász",
+  "Egészségügyi jogász",
+  "Környezetvédelmi jogász",
+  "Emberi jogi jogász",
+  "Sportjogász",
+  "IT- és adatvédelmi jogász",
+  "Mediátor (jogi végzettséggel)",
+  "Választottbíró",
+  "Bankjogász",
+  "Társasági jogász",
+  "Fogyasztóvédelmi jogász",
+  "Csődjogász",
+  "Végrehajtási jogász",
+  "Peres ügyvéd",
+  "Közlekedési jogász",
+  "Követeléskezelési ügyvéd",
+  "Kártérítési és biztosítási jogász",
+  "Szerzői jogi ügyvéd",
+  "Orvosi műhibaperekkel foglalkozó ügyvéd",
+  "Öröklési jogász",
+  "Egyesületi és alapítványi jogász",
+  "Oktatási jogász"
+]
+app.post("/aiChat", async (req, res) => {
+  try {
+      const userMessage = req.body.text; // user message
+
+      if (!userMessage) {
+          return res.status(400).json({ error: "Hiányzó bemenet!" });
+      }
+
+      // ChatGPT API call
+      const response = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: `Az API-dat használom, 
+            te egy jogi eset meghatározó algoritmusban szerepelsz 1 kifejezéssel válaszolhatsz, határozd meg a leírt
+            jogi probléma alapján, hogy milyen jogis képviselőre/segítségre van szükség (Válassz ezek közül a leírásra legjobban illőt és csak ennyit
+            válaszolj: ${lawyer_types}): ${userMessage} | Amennyiben ebből nem állapítható meg, vagy megadott szöveg nem jogi esettel kapcsolatos
+            ezt írd vissza: 'Nem beazonosítható!'` }],
+          max_tokens: 150,
+      });
+
+      const aiResponse = response.choices[0].message.content || "Nincs válasz.";
+      res.json({ result: aiResponse });
+      console.log("API válasz:", aiResponse);
+
+  } catch (error) {
+      console.error("Hiba történt:", error);
+      res.status(500).json({ error: "Hiba történt az AI hívás során." });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+

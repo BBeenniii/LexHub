@@ -5,6 +5,7 @@ import MainPage from "./components/MainPage";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Chat from "./components/Chat";
+import AiChat from "./components/aiChat";
 
 const App: React.FC = () => {
   const isAuthenticated = !!localStorage.getItem("token");
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Route path="/" element={<MainPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/aiChat" element={<AiChat />} />
           <Route
             path="/chat"
             element={isAuthenticated ? <Chat /> : <Navigate to="/login" />}
