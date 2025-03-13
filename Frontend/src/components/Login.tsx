@@ -15,8 +15,7 @@ const Login: React.FC = () => {
         email,
         password,
       });
-      alert("Login successful!");
-      navigate("/dashboard");
+      navigate("/aiChat");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }
@@ -25,7 +24,7 @@ const Login: React.FC = () => {
   return (
     <div className="background">
       <form className="login-form">
-        <h3>Bejelentkezés</h3>
+        <h3>Login</h3>
 
         <label htmlFor="email">Email</label>
         <input
@@ -36,16 +35,16 @@ const Login: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <label htmlFor="password">Jelszó:</label>
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
-          placeholder="Jelszó"
+          placeholder="Password"
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="buttonski" type="button" onClick={handleLogin}>Bejelentkezés</button>
+        <button className="buttonski" type="button" onClick={handleLogin}>Login</button>
         {error && <p className="error">{error}</p>}
         <div className="social">
             <div className="go"><i className="fab fa-google"></i><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Google</a> </div>

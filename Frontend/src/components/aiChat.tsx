@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./aiChat.css";
 
 function AIChat() {
   const [input, setInput] = useState("");
@@ -24,18 +25,17 @@ function AIChat() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h2>ChatGPT AI Chat</h2>
-      <input 
-        type="text" 
+    <div className="chat-container">
+      <h2>Lexhub AI Chat</h2>
+      <textarea 
         value={input} 
         onChange={(e) => setInput(e.target.value)} 
-        placeholder="Írj be valamit..."
+        placeholder="Add meg az ügyed adatait..."
       />
       <button onClick={queryAI} disabled={loading}>
-        {loading ? "Betöltés..." : "Küldés"}
+        {loading ? "Loading..." : "Submit "}
       </button>
-      <p><strong>Válasz:</strong> {response}</p>
+      <p><strong>Answer:</strong> {response}</p>
     </div>
   );
 }
