@@ -18,12 +18,17 @@ npm run dev
 ```
 
 ## 🛠️ Backend futtatása
-A backend Flask + SQLAlchemy alapú, és kezeli az adatbázis műveleteket, felhasználói azonosítást.
+Backned fájlban kell lenni a terminálban a parancsok futtatásához. 
 
 ```sh
-  pip install -r requirements.txt
+  cd backend
+```
+Npm csomagok letöltése és kód futtatása.
 
-  python -m backend.main
+```sh
+npm install
+
+npm run dev
 ```
 
 ---
