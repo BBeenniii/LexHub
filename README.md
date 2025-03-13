@@ -28,7 +28,7 @@ Npm csomagok letöltése és kód futtatása.
 ```sh
 npm install
 
-npm run dev
+node index.js
 ```
 
 ---
