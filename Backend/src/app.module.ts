@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserSeeker } from './auth/entities/userSeeker.entity';
 import { UserProvider } from './auth/entities/userProvider.entity';
 import { LawyerType } from './auth/entities/lawyerType.entity';
+import { AiChatModule } from './aichat/aichat.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LawyerType } from './auth/entities/lawyerType.entity';
     UserSeeker,
     UserProvider,
     LawyerType,
+    AiChatModule,
   ],
 })
 export class AppModule {}
