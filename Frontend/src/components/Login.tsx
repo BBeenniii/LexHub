@@ -1,57 +1,45 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import "./login.css";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [userType, setUserType] = useState<'seeker' | 'provider'>('seeker');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      await axios.post("http://localhost:3001/login", {
+      const res = await axios.post('http://localhost:3001/auth/login', {
+        userType,
         email,
         password,
       });
-      navigate("/aiChat");
+      alert(res.data.message);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+      alert(err.response?.data?.message || 'Hiba történt a bejelentkezés során.');
     }
   };
 
   return (
-    <div className="background">
-      <form className="login-form">
-        <h3>Login</h3>
+    <div className="login-container">
+      <h3>Bejelentkezés</h3>
 
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          placeholder="Email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <label>Felhasználó típusa:</label>
+      <select value={userType} onChange={(e) => setUserType(e.target.value as 'seeker' | 'provider')}>
+        <option value="seeker">Jogi segítséget keresek</option>
+        <option value="provider">Jogi segítséget nyújtok</option>
+      </select>
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          placeholder="Password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      <label>Email:</label>
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
-        <button className="buttonski" type="button" onClick={handleLogin}>Login</button>
-        {error && <p className="error">{error}</p>}
-        <div className="social">
-            <div className="go"><i className="fab fa-google"></i><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Google</a> </div>
-            <div className="fb"><i className="fab fa-facebook"></i><a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"> Facebook</a> </div>
-            <div className="ig"><i className="fab fa-instagram"></i><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"> Instagram</a> </div>
-        </div>
-      </form>
+      <label>Jelszó:</label>
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+
+      <button onClick={handleLogin}>Bejelentkezés</button>
     </div>
   );
 };

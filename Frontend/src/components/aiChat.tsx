@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./aiChat.css";
+import "..style/aiChat.css";
 
 function AIChat() {
   const [input, setInput] = useState("");
