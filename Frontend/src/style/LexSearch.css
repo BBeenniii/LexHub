@@ -1,0 +1,21 @@
+.lex-search-container {
+    padding: 20px;
+  }
+  
+  .filters {
+    margin-bottom: 20px;
+  }
+  
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .lawyer-card {
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 6px;
+    background: #f9f9f9;
+  }
+  
