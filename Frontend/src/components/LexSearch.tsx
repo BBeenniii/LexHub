@@ -103,7 +103,29 @@ const LexSearch: React.FC = () => {
     }
   };
 
-  const handleStartChat = async () => { // a chathez majd ha megvan a backend
+  const handleStartChat = async (providerId: number, providerName: string) => {
+    const user = getUser();
+    if (!user) {
+      alert("Jelentkezzen be a chat használatához!");
+      return;
+    }
+  
+    try {
+      const res = await fetch(`http://localhost:3001/messages/conversation/${user.id}/${providerId}`);
+      const data = await res.json();
+  
+      navigate("/chat", {
+        state: {
+          selectedConversationId: data.conversationId,
+          participant: {
+            id: providerId,
+            name: providerName,
+          },
+        },
+      });
+    } catch (err) {
+      console.error("[ERROR]: Hiba a beszélgetés indításakor:", err);
+    }
   };
   
 
@@ -155,7 +177,7 @@ const LexSearch: React.FC = () => {
             <p>{lawyer.email}</p>
             <p>{lawyer.phone}</p>
             <p>{lawyer.city}, {lawyer.country}</p>
-            <button onClick={() => handleStartChat()}>Beszélgetés kezdeményezése</button>
+            <button onClick={() => handleStartChat(lawyer.id, lawyer.name)}>Beszélgetés kezdeményezése</button>
           </div>
         ))}
       </div>

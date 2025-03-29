@@ -1,6 +1,6 @@
 import React from "react";
-import "./Navbar.scss";
-import "./MainPage.css";
+import "../style/Navbar.scss";
+import "../style//MainPage.css";
 import Footer from "./Footer";
 
 const MainPage: React.FC = () => {

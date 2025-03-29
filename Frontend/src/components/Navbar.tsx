@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./Navbar.scss";
+import { Link, useNavigate } from "react-router-dom";
+import "../style/Navbar.scss";
+import { getUser, isLoggedIn, logout } from "../utils/auth-utils";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const user = getUser();
+  const loggedIn = isLoggedIn();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header>
@@ -16,21 +25,40 @@ const Navbar: React.FC = () => {
         </button>
         <nav className={isOpen ? "open" : ""}>
           <ul>
-            <li className="nav-item">
-              <Link className="nav-link" to="/register">
-                Register
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/chat">
-                Chat
-              </Link>
-            </li>
+            {!loggedIn && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">Regisztráció</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">Bejelentkezés</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/lexSearch">Lex Search</Link>
+                </li>
+              </>
+            )}
+
+            {loggedIn && (
+              <>
+                {user?.userType === "seeker" && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/lexSearch">Lex Search</Link>
+                  </li>
+                )}
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">Profil</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/chat">Chatek</Link>
+                </li>
+                <li className="nav-item">
+                  <button className="nav-link logout-button" onClick={handleLogout}>
+                    Kijelentkezés
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>
