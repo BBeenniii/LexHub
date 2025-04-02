@@ -64,22 +64,21 @@ function AIChat() {
         {loading ? "Feldolgozás..." : "Beküldés"}
       </button>
 
-      {response && (
-        <>
-          <p><strong>AI válasz:</strong> {response}</p>
+      <button onClick={handleManual}>Inkább saját szakterületet választok</button>
 
-          {matchedSpecialty ? (
-            <>
-              <p>A jogeset elemzése alapján a következő szakterületű jogi képviselőre van szüksége:</p>
-              <h4>{matchedSpecialty.type}</h4>
-              <button onClick={handleAccept}>Ügyvéd keresése ezzel a szakterülettel</button>
-              <button onClick={handleManual}>Inkább saját szakterületet választok</button>
-            </>
-          ) : (
-            <p>Nem sikerült szakterületet azonosítani. Válassz kézzel.</p>
-          )}
-        </>
-      )}
+      {response && (
+  <div className="ai-result-box">
+    {matchedSpecialty ? (
+      <>
+        <p>A jogeset elemzése alapján a következő szakterületű jogi képviselőre van szüksége:</p>
+        <h4>{matchedSpecialty.type}</h4>
+        <button onClick={handleAccept}>Ügyvéd keresése ezzel a szakterülettel</button>
+      </>
+    ) : (
+      <p>Nem sikerült szakterületet azonosítani. Válassz kézzel.</p>
+    )}
+  </div>
+)}
     </div>
   );
 }

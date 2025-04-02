@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
                   <Link className="nav-link" to="/login">Bejelentkezés</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/lexSearch">Lex Search</Link>
+                  <Link className="nav-link" to="/login">Lex Search</Link>
                 </li>
               </>
             )}
@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
               <>
                 {user?.userType === "seeker" && (
                   <li className="nav-item">
-                    <Link className="nav-link" to="/lexSearch">Lex Search</Link>
+                    <Link className="nav-link" to="/aiChat">Lex Search</Link>
                   </li>
                 )}
                 <li className="nav-item">
@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
                 </li>
                 <li className="nav-item">
                   <button className="nav-link logout-button" onClick={handleLogout}>
-                    Kijelentkezés
+                    KIJELENTKEZÉS
                   </button>
                 </li>
               </>

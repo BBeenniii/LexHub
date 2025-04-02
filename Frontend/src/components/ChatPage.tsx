@@ -4,6 +4,7 @@ import ChatMessages from './ChatMessages';
 import { getUser } from '../utils/auth-utils';
 import { useLocation } from 'react-router-dom';
 import { User } from '../types/User';
+import "../style/Chat.css";
 
 interface Conversation {
   id: number;
@@ -24,63 +25,63 @@ const ChatsPage: React.FC = () => {
 
   useEffect(() => {
     const storedUser = getUser();
-    if (storedUser) setUser(storedUser);
-  }, []);
+    if (storedUser) {
+      setUser(storedUser);
 
-  useEffect(() => {
-    if (!user) return;
+      const fetchConversations = async () => {
+        try {
+          const res = await fetch(`http://localhost:3001/messages/conversations/${storedUser.userType}/${storedUser.id}`);
+          const data = await res.json();
 
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(`http://localhost:3001/messages/conversations/${user.userType}/${user.id}`);
-        const data = await res.json();
+          if (Array.isArray(data)) {
+            setConversations(data);
 
-        if (Array.isArray(data)) {
-          setConversations(data);
-
-          if (forcedConvId) {
-            const match = data.find((c) => c.id === forcedConvId);
-            if (match) {
-              setSelectedConv(match);
-              return;
+            if (forcedConvId) {
+              const match = data.find((c) => c.id === forcedConvId);
+              if (match) {
+                setSelectedConv(match);
+                return;
+              }
             }
-          }
 
-          if (data.length > 0) {
-            setSelectedConv(data[0]);
+            if (data.length > 0) {
+              setSelectedConv(data[0]);
+            }
+          } else {
+            console.warn("Nem tömb jött vissza:", data);
           }
-        } else {
-          console.warn("Nem tömb jött vissza:", data);
+        } catch (err) {
+          console.error("Hiba a beszélgetések lekérésekor:", err);
         }
-      } catch (err) {
-        console.error("Hiba a beszélgetések lekérésekor:", err);
-      }
-    };
+      };
 
-    fetchConversations();
-  }, [user, forcedConvId]);
+      fetchConversations();
+    }
+  }, [forcedConvId]);
 
   if (!user) {
     return <p style={{ padding: 20 }}>A csevegések megtekintéséhez be kell jelentkeznie...</p>;
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <ChatSidebar
-        conversations={conversations}
-        selectedConv={selectedConv}
-        onSelect={setSelectedConv}
-      />
-      <div style={{ flex: 1, borderLeft: '1px solid #ccc' }}>
-        {selectedConv ? (
-          <ChatMessages
-            conversationId={selectedConv.id}
-            currentUserId={user.id}
-            otherUser={selectedConv.participant}
-          />
-        ) : (
-          <p style={{ padding: 20 }}>Válasszon egy beszélgetést a bal oldali listából.</p>
-        )}
+    <div className="chat-wrapper">
+      <div className="chat-page">
+        <ChatSidebar
+          conversations={conversations}
+          selectedConv={selectedConv}
+          onSelect={setSelectedConv}
+        />
+        <div className="chat-main">
+          {selectedConv ? (
+            <ChatMessages
+              conversationId={selectedConv.id}
+              currentUserId={user.id}
+              otherUser={selectedConv.participant}
+            />
+          ) : (
+            <p className="chat-placeholder">Válasszon egy beszélgetést a bal oldali listából.</p>
+          )}
+        </div>
       </div>
     </div>
   );

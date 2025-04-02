@@ -26,6 +26,7 @@ const LexSearch: React.FC = () => {
   const [city, setCity] = useState('');
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [searched, setSearched] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:3001/auth/lawyertypes').then(res => {
@@ -56,6 +57,8 @@ const LexSearch: React.FC = () => {
     }
 
     const query: any = { specialtyId: selectedSpecialty };
+
+    setSearched(true); // jelöljük, hogy történt keresés
 
     if (locationType === 'nearby') {
       if ('geolocation' in navigator) {
@@ -94,7 +97,7 @@ const LexSearch: React.FC = () => {
       setLawyers(res.data);
     } else if (locationType === 'city') {
       if (!city) {
-        alert("Adjon meg egy várost!");
+        alert("Adj meg egy várost!");
         return;
       }
       query.city = city;
@@ -109,11 +112,11 @@ const LexSearch: React.FC = () => {
       alert("Jelentkezzen be a chat használatához!");
       return;
     }
-  
+
     try {
       const res = await fetch(`http://localhost:3001/messages/conversation/${user.id}/${providerId}`);
       const data = await res.json();
-  
+
       navigate("/chat", {
         state: {
           selectedConversationId: data.conversationId,
@@ -127,61 +130,72 @@ const LexSearch: React.FC = () => {
       console.error("[ERROR]: Hiba a beszélgetés indításakor:", err);
     }
   };
-  
 
   return (
-    <div className="lex-search-container">
-      <h2>Ügyvéd kereső</h2>
+    <>
+    
+      <div className="main-page lexsearch-content">
+      <div className="filter-row">
 
-      <div className="filters">
-        <label>Szakterület:</label>
-        <select
-          value={selectedSpecialty ?? ''}
-          onChange={(e) => setSelectedSpecialty(Number(e.target.value))}
-        >
-          <option value="">-- Válassz szakterületet --</option>
-          {lawyerTypes.map(type => (
-            <option key={type.id} value={type.id}>{type.type}</option>
-          ))}
-        </select>
+        <div className="search-card">
+          Ügyvéd keresés
+        </div>
 
-        <label>Helyszín szerinti szűrés:</label>
-        <select value={locationType} onChange={(e) => setLocationType(e.target.value as any)}>
-          <option value="nearby">Közelemben</option>
-          <option value="county">Megye szerint</option>
-          <option value="city">Város szerint</option>
-        </select>
-
-        {locationType === 'county' && (
-          <>
-            <label>Megye:</label>
-            <input type="text" value={county} onChange={(e) => setCounty(e.target.value)} />
-          </>
-        )}
-
-        {locationType === 'city' && (
-          <>
-            <label>Város:</label>
-            <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
-          </>
-        )}
-
-        <button onClick={handleSearch}>Keresés</button>
-      </div>
-
-      <div className="results">
-        {lawyers.length === 0 && <p>Nincs megjeleníthető ügyvéd.</p>}
-        {lawyers.map(lawyer => (
-          <div key={lawyer.id} className="lawyer-card">
-            <h4>{lawyer.name}</h4>
-            <p>{lawyer.email}</p>
-            <p>{lawyer.phone}</p>
-            <p>{lawyer.city}, {lawyer.country}</p>
-            <button onClick={() => handleStartChat(lawyer.id, lawyer.name)}>Beszélgetés kezdeményezése</button>
+          <div className="filter-group">
+            <label>Szakterület:</label>
+            <select
+              value={selectedSpecialty ?? ''}
+              onChange={(e) => setSelectedSpecialty(Number(e.target.value))}
+            >
+              <option value="">-- Válassz --</option>
+              {lawyerTypes.map(type => (
+                <option key={type.id} value={type.id}>{type.type}</option>
+              ))}
+            </select>
           </div>
-        ))}
+
+          <div className="filter-group">
+            <label>Szűrés hely szerint:</label>
+            <select value={locationType} onChange={(e) => setLocationType(e.target.value as any)}>
+              <option value="nearby">Közelemben</option>
+              <option value="county">Megye szerint</option>
+              <option value="city">Város szerint</option>
+            </select>
+          </div>
+
+          {locationType === 'county' && (
+            <div className="filter-group">
+              <label>Megye:</label>
+              <input type="text" value={county} onChange={(e) => setCounty(e.target.value)} />
+            </div>
+          )}
+
+          {locationType === 'city' && (
+            <div className="filter-group">
+              <label>Város:</label>
+              <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
+            </div>
+          )}
+
+          <button onClick={handleSearch} className="search-btn">Keresés</button>
+        </div><br></br>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+          {searched && lawyers.length === 0 && (
+            <p className="col-span-full text-center text-gray-200">Nincs megjeleníthető ügyvéd.</p>
+          )}
+          {lawyers.map(lawyer => (
+            <div key={lawyer.id} className="lawyer-card">
+              <h4>{lawyer.name}</h4>
+              <p>{lawyer.email}</p>
+              <p>{lawyer.phone}</p>
+              <p>{lawyer.city}, {lawyer.country}</p>
+              <button onClick={() => handleStartChat(lawyer.id, lawyer.name)}>Beszélgetés</button>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

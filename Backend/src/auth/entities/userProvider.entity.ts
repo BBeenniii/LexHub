@@ -26,7 +26,7 @@ export class UserProvider {
   @Column()
   country: string;
 
-  @Column({ nullable: true })
+  @Column()
   county: string;
 
   @Column()
@@ -42,9 +42,8 @@ export class UserProvider {
   specs: string;
 
   @Column('decimal', { precision: 10, scale: 6, nullable: true })
-    lat: number;
+  lat: number;
 
   @Column('decimal', { precision: 10, scale: 6, nullable: true })
-    lng: number;
-
+  lng: number;
 }

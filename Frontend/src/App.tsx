@@ -9,6 +9,7 @@ import { getUser } from "./utils/auth-utils";
 import LexSearch from "./components/LexSearch";
 import ChatsPage from "./components/ChatPage";
 import SocketProvider from "./context/SocketContext";
+import Profile from "./components/Profile";
 
 
 const App: React.FC = () => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/aiChat" element={<AiChat />} />
             <Route path="/lexSearch" element={<LexSearch />} />
+            <Route path="/profile" element={<Profile/>} />
             <Route
               path="/chat"
               element={

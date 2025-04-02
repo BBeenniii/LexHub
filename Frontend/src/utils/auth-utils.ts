@@ -1,4 +1,9 @@
-import { User } from '../types/User';
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  userType: 'seeker' | 'provider';
+}
 
 export const getUser = (): User | null => {
   try {
@@ -10,7 +15,11 @@ export const getUser = (): User | null => {
 };
 
 export const isLoggedIn = (): boolean => {
-  return !!localStorage.getItem('user');
+  return !!getUser();
+};
+
+export const setUser = (user: User) => {
+  localStorage.setItem('user', JSON.stringify(user));
 };
 
 export const logout = () => {

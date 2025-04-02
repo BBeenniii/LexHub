@@ -1,166 +1,116 @@
-.login-form *,
-.login-form *:before,
-.login-form *:after {
+    .login-form *,
+    .login-form *:before,
+    .login-form *:after {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-}
-body {
+    }
+
+    body {
     background-color: #080710;
-}
-.login-form {
-    height: 570px;
-    width: 600px;
+    }
+
+    .login-form {
+    max-width: 600px;
+    width: 90%;
     background-color: rgba(255, 255, 255, 0.13);
-    position: absolute;
-    transform: translate(-50%);
-    top: 50%;
-    left: 50%;
     border-radius: 10px;
-    backdrop-filter: blur(7px);
+    backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-    padding: 50px 35px;
-    margin-top: -16%;
-}
+    padding: 40px 30px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    }
 
-.login-form * {
-    font-family: 'Poppins', sans-serif;
+    .login-form * {
     color: #ffffff;
     letter-spacing: 0.5px;
     outline: none;
     border: none;
-}
-.login-form h3 {
+    }
+
+    .login-form h3 {    
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
-}
-.login-form label {
-    display: block;
-    margin-top: 30px;
+    }
+
+    .login-form label {
     font-size: 16px;
     font-weight: 500;
-}
-.login-form input {
-    display: block;
-    height: 70px;
+    margin-bottom: 6px;
+    }
+
+    label{
+        margin-bottom: 6px;
+    }
+
+    .login-form input,
+    .filter-group input,
+    .filter-group select {
+    height: 50px;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.07);
-    border-radius: 3px;
-    padding: 0 10px;
-    margin-top: 8px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 0 16px;
     font-size: 14px;
     font-weight: 300;
-}
-.login-form ::placeholder {
+    color: white;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    }
+
+    .login-form ::placeholder {
     color: #e5e5e5;
-}
-.login-form .buttonski {
-    margin-top: 50px;
-    width: 100%;
+    }
+
+    .login-form .buttonski {
     background-color: #ffffff;
     color: #080710;
     padding: 15px 0;
     font-size: 18px;
     font-weight: 600;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-}
-.login-form .social {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-}
-.login-form .social div {
-    background: red;
-    flex: 1;
-    border-radius: 3px;
-    padding: 10px 10px 10px 10px;
-    background-color: rgba(255, 255, 255, 0.27);
-    color: #eaf0fb;
-    text-align: center;
-}
-.login-form .social div:hover {
-    background-color: rgba(255, 255, 255, 0.47);
-}
+    transition: background-color 0.3s ease;
+    }
 
-.go{
-    margin-right: 15px;
-}
+    .login-form .buttonski:hover {
+    background-color: #e0e0e0;
+    }
 
-.ig{
-    margin-left: 15px;
-}
-
-.social{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-}
-
-a{
-    text-decoration: none;
-}
-@media (max-width: 768px) {
+    @media (max-width: 480px) {
     .login-form {
-        width: 90%;
-        height: auto;
         padding: 30px 20px;
-    }
-
-    .login-form input {
-        height: 50px;
-    }
-
-    .login-form .buttonski {
-        padding: 10px 0;
-        font-size: 16px;
-    }
-}
-
-
-@media (max-width: 480px) {
-    .login-form {
-        width: 100%;
-        height: auto;
-        padding: 20px 10px;
     }
 
     .login-form h3 {
         font-size: 24px;
     }
 
-    .login-form label {
-        font-size: 14px;
-    }
-
-    .login-form input {
-        height: 40px;
-        font-size: 12px;
+    .login-form input,
+    .filter-group select {
+        height: 44px;
+        font-size: 13px;
     }
 
     .login-form .buttonski {
-        padding: 8px 0;
-        font-size: 14px;
+        padding: 12px 0;
+        font-size: 16px;
     }
-    .social{
+
+    .social {
         flex-direction: column;
     }
 
-    .go{
-        width: 40%;
-        margin-right: 0;
+    .social div {
+        margin-bottom: 10px;
     }
-    .fb{
-        width: 40%;
-        margin-top: 15px;
-        margin-bottom: 15px;
     }
-    .ig{
-        width: 40%;
-        margin-left: 0;
-    }
-}

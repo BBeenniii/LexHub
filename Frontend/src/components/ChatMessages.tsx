@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../context/SocketContext';
+import '../style/Chat.css';
 
 interface Message {
   id?: number;
@@ -25,34 +26,29 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
   useEffect(() => {
     if (!socket) return;
 
-    console.log('[LOG]: getMessages emit:', conversationId);
     socket.emit('getMessages', { conversationId });
 
     const handleLoadedMessages = (msgs: Message[]) => {
-      console.log('[LOG]: loadedMessages:', msgs);
       setMessages(msgs);
     };
 
     socket.on('loadedMessages', handleLoadedMessages);
-
     return () => {
       socket.off('loadedMessages', handleLoadedMessages);
     };
   }, [socket, conversationId]);
 
-  // Real-time frissítés
+  // Valós idejű frissítés
   useEffect(() => {
     if (!socket) return;
 
     const handleUpdate = (updatedConversationId: number) => {
       if (updatedConversationId === conversationId) {
-        console.log('[LOG]: chatUpdated event meghivva, üzenetek újratöltése...');
         socket.emit('getMessages', { conversationId });
       }
     };
 
     socket.on('chatUpdated', handleUpdate);
-
     return () => {
       socket.off('chatUpdated', handleUpdate);
     };
@@ -68,36 +64,23 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
       conversationId,
     };
 
-    console.log('[LOG]: sendMessage emit:', newMessage);
     socket.emit('sendMessage', newMessage);
     setInput('');
   };
 
   return (
-    <div className="chat-box" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ flex: 1, overflowY: 'auto', padding: 10 }}>
-      {messages.map((msg, index) => {
-        const isOwn = msg.senderId === currentUserId;
+    <div className="chat-box">
+      <div className="chat-messages-scroll">
+        {messages.map((msg, index) => {
+          const isOwn = msg.senderId === currentUserId;
           return (
             <div
               key={msg.id || index}
-              style={{
-                display: 'flex',
-                justifyContent: isOwn ? 'flex-end' : 'flex-start',
-                marginBottom: 4,
-              }}
+              className={`message-container ${isOwn ? 'own' : 'other'}`}
             >
-              <div
-                style={{
-                  background: isOwn ? '#dcf8c6' : '#f1f1f1',
-                  padding: '8px 12px',
-                  borderRadius: 10,
-                  maxWidth: '60%',
-                  alignSelf: isOwn ? 'flex-end' : 'flex-start',
-                }}
-              >
+              <div className={`message ${isOwn ? 'message-own' : 'message-other'}`}>
                 {msg.text}
-                <div style={{ fontSize: 10, textAlign: 'right', marginTop: 4 }}>
+                <div className="message-time">
                   {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : ''}
                 </div>
               </div>
@@ -106,18 +89,15 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
         })}
       </div>
 
-      <div style={{ display: 'flex', padding: 10, borderTop: '1px solid #ccc' }}>
+      <div className="chat-input">
         <input
           type="text"
           value={input}
           placeholder="Üzenet írása..."
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-          style={{ flex: 1, padding: 8 }}
         />
-        <button onClick={sendMessage} style={{ marginLeft: 8 }}>
-          Küldés
-        </button>
+        <button onClick={sendMessage}>Küldés</button>
       </div>
     </div>
   );

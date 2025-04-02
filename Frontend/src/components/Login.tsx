@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../style/Login.css';
 
 const Login: React.FC = () => {
   const [userType, setUserType] = useState<'seeker' | 'provider'>('seeker');
@@ -24,23 +25,25 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <h3>Bejelentkezés</h3>
+<div className="login-form">
+  <h3>Bejelentkezés</h3>
+  
+  <div className="filter-group">
+    <label>Felhasználó típusa:</label>
+    <select value={userType} onChange={(e) => setUserType(e.target.value as 'seeker' | 'provider')}>
+      <option value="seeker">Jogi segítséget keresek</option>
+      <option value="provider">Jogi segítséget nyújtok</option>
+    </select>
+  </div>
 
-      <label>Felhasználó típusa:</label>
-      <select value={userType} onChange={(e) => setUserType(e.target.value as 'seeker' | 'provider')}>
-        <option value="seeker">Jogi segítséget keresek</option>
-        <option value="provider">Jogi segítséget nyújtok</option>
-      </select>
+  <label>Email:</label>
+  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
-      <label>Email:</label>
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+  <label>Jelszó:</label>
+  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-      <label>Jelszó:</label>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-      <button onClick={handleLogin}>Bejelentkezés</button>
-    </div>
+  <button className="buttonski" onClick={handleLogin}>Bejelentkezés</button>
+</div>
   );
 };
 

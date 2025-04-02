@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserSeeker } from './entities/userSeeker.entity';
 import { UserProvider } from './entities/userProvider.entity';
-import { LawyerType } from './entities/lawyerType.entity'; 
+import { LawyerType } from './entities/lawyerType.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -14,6 +14,6 @@ import { ConfigModule } from '@nestjs/config';
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService], 
+  exports: [AuthService],
 })
 export class AuthModule {}

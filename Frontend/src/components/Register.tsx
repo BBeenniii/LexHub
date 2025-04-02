@@ -15,16 +15,15 @@ const Register: React.FC = () => {
     phone: '',
     country: '',
     county: '',
-
     city: '',
     password: '',
     confirmPassword: '',
     kasz: '',
     specs: [] as number[],
   });
+
   const navigate = useNavigate();
 
-  // Backend API hívás
   useEffect(() => {
     axios.get('http://localhost:3001/auth/lawyertypes').then(response => {
       setLawyerTypes(response.data);
@@ -39,7 +38,9 @@ const Register: React.FC = () => {
     const id = Number(e.target.value);
     setFormData(prev => ({
       ...prev,
-      specs: e.target.checked ? [...prev.specs, id] : prev.specs.filter(specId => specId !== id),
+      specs: e.target.checked
+        ? [...prev.specs, id]
+        : prev.specs.filter(specId => specId !== id),
     }));
   };
 
@@ -83,7 +84,7 @@ const Register: React.FC = () => {
     const postData = {
       ...formData,
       providerType: userType === 'provider' ? providerType : undefined,
-      specs: specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1), // Ha nincs engedélyezve, akkor csak 1 spec - et ment 
+      specs: specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1),
     };
 
     try {
@@ -128,10 +129,19 @@ const Register: React.FC = () => {
             További szakterületeket választok
           </label>
 
-          <div>
+          <div className="spec-checkboxes">
             {lawyerTypes.map(lawyer => (
-              <label key={lawyer.id}>
-                <input type="checkbox" value={lawyer.id} onChange={handleSpecialtiesChange} disabled={!specialtiesEnabled && formData.specs.length >= 1} />
+              <label
+                key={lawyer.id}
+                className={!specialtiesEnabled && formData.specs.length >= 1 ? 'disabled' : ''}
+              >
+                <input
+                  type="checkbox"
+                  value={lawyer.id}
+                  onChange={handleSpecialtiesChange}
+                  disabled={!specialtiesEnabled && formData.specs.length >= 1}
+                  checked={formData.specs.includes(lawyer.id)}
+                />
                 {lawyer.type}
               </label>
             ))}
@@ -153,7 +163,6 @@ const Register: React.FC = () => {
 
       <label>Megye:</label>
       <input type="text" name="county" value={formData.county} onChange={handleChange} />
-
 
       <label>Város:</label>
       <input type="text" name="city" value={formData.city} onChange={handleChange} />

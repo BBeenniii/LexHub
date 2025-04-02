@@ -1,144 +1,124 @@
 .chat-container,
 .chat-container * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #080710;
+  background-color: #080710;
 }
 
 .chat-container {
-    height: auto;
-    width: 80%;
-    max-width: 600px;
-    background-color: rgba(255, 255, 255, 0.13);
-    position: absolute;
-    transform: translate(-50%);
-    left: 50%;
-    top: 27%;
-    border-radius: 10px;
-    backdrop-filter: blur(7px);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-    padding: 50px 35px;
-    text-align: center;
-}
-
-textarea {
-    field-sizing: content;
-    max-width: 100%;
-    min-width: 100%;
-    background-color: rgba(255, 255, 255, 0.07);
-    border-radius: 3px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 300;
-    color: #ffffff;
-    height: 100px; 
-}
-
-textarea::placeholder {
-    color: #e5e5e5;
-}
-
-.chat-container * {
-    font-family: 'Poppins', sans-serif;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-    outline: none;
-    border: none;
+  max-width: 600px;
+  width: 90%;
+  background-color: rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 40px 30px;
+  margin: 80px auto;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
 }
 
 .chat-container h2 {
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 42px;
-    text-align: center;
-    margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
-.chat-container input {
-    display: block;
-    height: 70px;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.07);
-    border-radius: 3px;
-    padding: 0 10px;
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: 300;
-    margin-bottom: 20px;
+.chat-container textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  font-size: 15px;
+  color: white;
+  font-weight: 300;
+  backdrop-filter: blur(4px);
+  border: none;
+  margin-bottom: 16px;
 }
 
-.chat-container input::placeholder {
-    color: #e5e5e5;
+textarea::placeholder {
+  color: #d5d5d5;
 }
 
 .chat-container button {
-    width: 100%;
-    background-color: #ffffff;
-    color: #080710;
-    margin-top: 10px;
-    padding: 15px 0;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.chat-container button:disabled {
-    background-color: #a777e3;
-    cursor: not-allowed;
+  width: 100%;
+  background-color: #ffffff;
+  color: #080710;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  margin-top: 10px;
 }
 
 .chat-container button:hover:not(:disabled) {
-    background-color: #5a7de0;
+  background-color: #d3d3ff;
 }
 
-.chat-container p {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    color: #ffffff;
+.chat-container button:disabled {
+  background-color: #a777e3;
+  cursor: not-allowed;
+}
+
+.ai-result-box {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 25px;
+  box-shadow: 0 0 15px rgba(8, 7, 16, 0.4);
+}
+
+.ai-result-box p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.ai-result-box h4 {
+  margin: 10px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {
-    .chat-container {
-        width: 90%;
-        height: auto;
-        padding: 30px 20px;
-    }
+  .chat-container {
+    padding: 30px 20px;
+  }
 
-    .chat-container input {
-        height: 50px;
-    }
+  .chat-container h2 {
+    font-size: 26px;
+  }
 
-    .chat-container button {
-        padding: 10px 0;
-        font-size: 16px;
-    }
+  .chat-container button {
+    padding: 12px 0;
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 480px) {
-    .chat-container {
-        width: 100%;
-        height: auto;
-        padding: 20px 10px;
-    }
+  .chat-container {
+    padding: 20px 15px;
+  }
 
-    .chat-container h2 {
-        font-size: 24px;
-    }
+  .chat-container h2 {
+    font-size: 22px;
+  }
 
-    .chat-container input {
-        height: 40px;
-        font-size: 12px;
-    }
-
-    .chat-container button {
-        padding: 8px 0;
-        font-size: 14px;
-    }
+  .chat-container button {
+    padding: 10px 0;
+    font-size: 14px;
+  }
 }
