@@ -58,7 +58,7 @@ const LexSearch: React.FC = () => {
 
     const query: any = { specialtyId: selectedSpecialty };
 
-    setSearched(true); // jelöljük, hogy történt keresés
+    setSearched(true);
 
     if (locationType === 'nearby') {
       if ('geolocation' in navigator) {

@@ -129,23 +129,24 @@ const Register: React.FC = () => {
             További szakterületeket választok
           </label>
 
-          <div className="spec-checkboxes">
-            {lawyerTypes.map(lawyer => (
-              <label
-                key={lawyer.id}
-                className={!specialtiesEnabled && formData.specs.length >= 1 ? 'disabled' : ''}
-              >
-                <input
-                  type="checkbox"
-                  value={lawyer.id}
-                  onChange={handleSpecialtiesChange}
-                  disabled={!specialtiesEnabled && formData.specs.length >= 1}
-                  checked={formData.specs.includes(lawyer.id)}
-                />
-                {lawyer.type}
-              </label>
-            ))}
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {lawyerTypes.map(lawyer => (
+            <label
+              key={lawyer.id}
+              className="flex items-center bg-white/10 backdrop-blur-md p-3 rounded-lg shadow-md text-white text-sm gap-2 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value={lawyer.id}
+                onChange={handleSpecialtiesChange}
+                disabled={!specialtiesEnabled && formData.specs.length >= 1}
+                checked={formData.specs.includes(lawyer.id)}
+                className="w-4 h-4 accent-white"
+              />
+              {lawyer.type}
+            </label>
+          ))}
+        </div>
         </>
       )}
 

@@ -68,7 +68,6 @@
   font-weight: 500;
 }
 
-/* Szakterületek checkboxok */
 .spec-checkboxes {
   display: flex;
   flex-wrap: wrap;

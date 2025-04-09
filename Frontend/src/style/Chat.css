@@ -5,7 +5,6 @@
   height: 100vh;
 }
 
-/* Oldalsáv */
 .chat-sidebar {
   width: 250px;
   padding: 20px;
@@ -39,7 +38,6 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Fő tartalom */
 .chat-main {
   flex: 1;
   display: flex;
@@ -51,7 +49,6 @@
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Chat ablak */
 .chat-box {
   display: flex;
   flex-direction: column;
@@ -65,7 +62,6 @@
   margin-bottom: 16px;
 }
 
-/* Üzenetek */
 .message {
   max-width: 70%;
   padding: 12px 16px;
@@ -98,7 +94,6 @@
   opacity: 0.7;
 }
 
-/* Input */
 .chat-box > div:last-child {
   display: flex;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -136,7 +131,6 @@
   background-color: #e0e0e0;
 }
 
-/* Üres állapot */
 .chat-placeholder,
 .chat-loading {
   padding: 20px;
@@ -144,7 +138,6 @@
   font-size: 16px;
 }
 
-/* Scrollbar */
 .chat-sidebar::-webkit-scrollbar,
 .chat-box > div:first-child::-webkit-scrollbar {
   width: 6px;
@@ -155,7 +148,6 @@
   border-radius: 4px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .chat-page {
     flex-direction: column;
@@ -194,7 +186,7 @@
     padding: 10px 16px;
   }
 }
-/* === TELJES CHAT OLDAL SZEGÉLYEZÉSE ÉS KÖZÉPRE IGAZÍTÁS === */
+
 .chat-wrapper {
     max-width: 1400px;
     margin: 40px auto;
@@ -205,15 +197,13 @@
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
-  /* A chat-page legyen most 100% magasságú a wrapperen belül, ne teljes viewporton */
+
   .chat-page {
-    height: 530px; /* vagy pl. min-height: 80vh; */
+    height: 530px;
     border-radius: 20px;
     overflow: hidden;
   }
 
-  /* BUBORÉKOK IGAZÍTÁSA JOBBRA ÉS BALRA */
 .message-container {
     display: flex;
     width: 100%;
@@ -241,7 +231,6 @@
     margin-bottom: 10px;
   }
   
-  /* Üzenetek igazítása */
   .message-container {
     display: flex;
     width: 100%;
@@ -287,7 +276,6 @@
     opacity: 0.6;
   }
   
-  /* Input mező */
   .chat-input {
     display: flex;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -324,8 +312,7 @@
   .chat-input button:hover {
     background-color: #e0e0e0;
   }
-  
-  /* Mobilbarát */
+
   @media (max-width: 768px) {
     .message {
       max-width: 85%;

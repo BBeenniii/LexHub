@@ -89,6 +89,29 @@ body {
   font-weight: 300;
 }
 
+.footer-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .footer-main {
+    height: 8vh;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-main {
+    height: 7vh;
+    font-size: 0.8rem;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

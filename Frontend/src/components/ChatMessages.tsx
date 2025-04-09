@@ -22,7 +22,6 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
-  // Üzenetek betöltése
   useEffect(() => {
     if (!socket) return;
 
@@ -38,7 +37,6 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
     };
   }, [socket, conversationId]);
 
-  // Valós idejű frissítés
   useEffect(() => {
     if (!socket) return;
 
