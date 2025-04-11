@@ -8,9 +8,9 @@ const MainPage: React.FC = () => {
     <div className="page-wrapper">
       <div className="main-page">
         <div className="text-center">
-          <h1 className="display-4 animated-title">Welcome to LexHub</h1>
+          <h1 className="display-4 animated-title">LexHub</h1>
           <p className="lead animated-text">
-            Connect with your lawyer securely and efficiently.
+            Találjon jogis képviselőt, bárhol, bármilyen esetre!
           </p>
         </div>
       </div>

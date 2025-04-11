@@ -29,12 +29,24 @@ export class AiChatService {
     const response = await this.openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "user", content: `Az API-dat használom. A felhasználó jogi segítséget kér: "${userMessage}". 
-        Egyetlen szóban válaszolj egy listából, amely meghatározza a megfelelő jogászt: ${lawyer_types}.
-        Ha nem egyértelmű, akkor válaszolj ezzel: "Nem beazonosítható!"` },
+        {
+          role: "system",
+          content: `A felhasználó problémájára CSAK egy szót válaszolj az alábbi listából. 
+          Más szót NE használj, ne adj magyarázatot. Ha nem tudsz választani, pontosan ezt írd vissza: Nem beazonosítható!
+          
+          Jogásztípusok: ${lawyer_types.join(", ")}`
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
       ],
       max_tokens: 10,
     });
+    /* 
+    console.log(response)
+    console.log("AI response:", response.choices[0].message.content);
+    */
 
     return response.choices[0].message.content || "Nincs válasz.";
   }

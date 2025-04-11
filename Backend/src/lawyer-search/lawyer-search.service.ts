@@ -19,7 +19,7 @@ export class LawyerSearchService {
             spec: JSON.stringify([specialtyId]),
           });
       
-        // Közelemben keresés (30 km-en belül)
+        // Közelemben keresés
         if (location.lat && location.lng) {
           baseQuery
             .addSelect(`
@@ -29,7 +29,7 @@ export class LawyerSearchService {
               ) AS distance
             `)
             .setParameters({ lat: location.lat, lng: location.lng })
-            .having('distance <= 30000')
+            .having('distance <= 30000') // 30 km en belül
             .orderBy('distance', 'ASC');
         }
       

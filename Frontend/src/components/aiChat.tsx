@@ -12,17 +12,30 @@ function AIChat() {
   const navigate = useNavigate();
 
   const queryAI = async () => {
+    if (!input || input.trim().length < 5) {
+      alert("Kérlek, írj be egy hosszabb leírást a jogesetről.");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("http://localhost:3001/aiChat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input })
+        body: JSON.stringify({ prompt: input }),
       });
 
       const data = await res.json();
-      setResponse(data.result);
-      await matchSpecialty(data.result);
+      console.log("[LOG]: Backend válasz:", data);
+
+      if (data?.recommendation) {
+        console.log("[LOG]: AI ajánlás:", data.recommendation);
+        setResponse(data.recommendation);
+        await matchSpecialty(data.recommendation);
+      } else {
+        console.warn("[WARNING]: Nincs recommendation kulcs!");
+        setResponse("Nem sikerült szakterületet meghatározni.");
+      }
     } catch (error) {
       console.error("[ERROR]:", error);
       setResponse("Hiba történt.");
@@ -31,13 +44,27 @@ function AIChat() {
   };
 
   const matchSpecialty = async (aiResult: string) => {
+    console.log("[LOG]: Specialty egyeztetés indul AI válasz alapján:", aiResult);
+
     const res = await fetch("http://localhost:3001/auth/lawyertypes");
     const allTypes = await res.json();
     setLawyerTypes(allTypes);
+    console.log("[LOG]: Elérhető szakterületek:", allTypes);
 
-    const match = allTypes.find((type: { id: number, type: string }) =>
-      aiResult.toLowerCase().includes(type.type.toLowerCase())
+    const normalizedAI = aiResult.trim().toLowerCase();
+    const match = allTypes.find((type: { id: number; type: string }) =>
+      type.type.trim().toLowerCase() === normalizedAI
     );
+
+    allTypes.forEach((type: { id: number; type: string }) => {
+      console.log(`[LOG]: Összehasonlítás: "${type.type.trim().toLowerCase()}" === "${normalizedAI}" → ${type.type.trim().toLowerCase() === normalizedAI}`);
+    });
+
+    if (match) {
+      console.log("[LOG]: Talált szakterület:", match);
+    } else {
+      console.warn("[WARNING]: Nem talált egyező szakterület az AI válasz alapján.");
+    }
 
     setMatchedSpecialty(match || null);
   };
@@ -54,31 +81,31 @@ function AIChat() {
 
   return (
     <div className="chat-container">
-      <h2>Lexhub AI Chat</h2>
+      <h2>MI Ügyvéd kereső</h2>
       <textarea 
-        value={input} 
-        onChange={(e) => setInput(e.target.value)} 
-        placeholder="Írja lé részletesen jogesetét..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Írja le részletesen jogesetét..."
       />
       <button onClick={queryAI} disabled={loading}>
         {loading ? "Feldolgozás..." : "Beküldés"}
       </button>
 
-      <button onClick={handleManual}>Inkább saját szakterületet választok</button>
+      <button onClick={handleManual}>Inkább magam választok szakterületet</button>
 
       {response && (
-  <div className="ai-result-box">
-    {matchedSpecialty ? (
-      <>
-        <p>A jogeset elemzése alapján a következő szakterületű jogi képviselőre van szüksége:</p>
-        <h4>{matchedSpecialty.type}</h4>
-        <button onClick={handleAccept}>Ügyvéd keresése ezzel a szakterülettel</button>
-      </>
-    ) : (
-      <p>Nem sikerült szakterületet azonosítani. Válassz kézzel.</p>
-    )}
-  </div>
-)}
+        <div className="ai-result-box">
+          {matchedSpecialty ? (
+            <>
+              <p>A jogeset elemzése alapján a következő szakterületű jogi képviselőre van szüksége:</p>
+              <h4>{matchedSpecialty.type}</h4>
+              <button onClick={handleAccept}>Ügyvéd keresése ezzel a szakterülettel</button>
+            </>
+          ) : (
+            <p>Nem sikerült a szakterületet beazonosítani. Válasszon manuálisan!</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
