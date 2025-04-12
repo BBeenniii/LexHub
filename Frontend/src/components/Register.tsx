@@ -79,14 +79,28 @@ const Register: React.FC = () => {
 
   const handleRegister = async () => {
     if (!validateInput()) return;
-
+  
     const endpoint = userType === 'seeker' ? 'register/seeker' : 'register/provider';
-    const postData = {
-      ...formData,
-      providerType: userType === 'provider' ? providerType : undefined,
-      specs: specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1),
+  
+    const postData: any = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.country,
+      county: formData.county,
+      city: formData.city,
+      password: formData.password,
     };
-
+  
+    if (userType === 'provider') {
+      postData.kasz = formData.kasz;
+      postData.providerType = providerType;
+      if (providerType === 'company') {
+        postData.companyName = formData.companyName;
+      }
+      postData.specs = specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1);
+    }
+  
     try {
       await axios.post(`http://localhost:3001/auth/${endpoint}`, postData);
       alert('Sikeres regisztráció!');
@@ -94,7 +108,7 @@ const Register: React.FC = () => {
     } catch (err: any) {
       alert(err.response?.data?.message || 'Hiba történt a regisztráció során.');
     }
-  };
+  };  
 
   return (
     <div className="register-container">

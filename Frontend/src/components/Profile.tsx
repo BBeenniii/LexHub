@@ -23,15 +23,8 @@ interface LawyerType {
 const Profile: React.FC = () => {
   const storedUser = getUser();
   const [user, setUser] = useState<UserData | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    country: '',
-    county: '',
-    city: '',
-    specs: [] as number[],
-  });
+  const [formData, setFormData] = useState({ ...user });
+  const [error, setError] = useState("");
   const [lawyerTypes, setLawyerTypes] = useState<LawyerType[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState('');
@@ -82,42 +75,60 @@ const Profile: React.FC = () => {
   const toggleSpec = (specId: number) => {
     setFormData((prev) => ({
       ...prev,
-      specs: prev.specs.includes(specId)
-        ? prev.specs.filter((id) => id !== specId)
-        : [...prev.specs, specId],
+      specs: Array.isArray(prev.specs)
+        ? prev.specs.includes(specId)
+          ? prev.specs.filter((id) => id !== specId)
+          : [...prev.specs, specId]
+        : [specId],
     }));
-  };
+  };  
 
   const handleSave = async () => {
     if (!user) return;
-
-    const payload: any = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      country: formData.country,
-      county: formData.county,
-      city: formData.city,
-    };
-
-    if (user.userType === 'provider') {
-      payload.specs = formData.specs;
+  
+    const updatedFields: any = {};
+  
+    if (formData.name !== user.name) updatedFields.name = formData.name;
+    if (formData.email !== user.email) updatedFields.email = formData.email;
+    if (formData.phone !== user.phone) updatedFields.phone = formData.phone;
+    if (formData.country !== user.country) updatedFields.country = formData.country;
+    if (formData.county !== user.county) updatedFields.county = formData.county;
+    if (formData.city !== user.city) updatedFields.city = formData.city;
+  
+    if (
+      user.userType === "provider" &&
+      JSON.stringify(formData.specs) !== JSON.stringify(user.specs)
+    ) {
+      updatedFields.specs = formData.specs;
     }
-
+  
+    if (Object.keys(updatedFields).length === 0) {
+      setError("Nincs módosított adat.");
+      return;
+    }
+  
     try {
-      const res = await fetch(`http://localhost:3001/auth/profile/${user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const res = await fetch(`http://localhost:3001/auth/profile/${user.userType}/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
       });
-
-      const result = await res.json();
-      setMessage(result.message || 'Sikeres frissítés!');
+  
+      if (!res.ok) {
+        const error = await res.json();
+        setError("Mentési hiba: " + (error.message || "Ismeretlen hiba."));
+        return;
+      }
+  
+      const updatedUser = await res.json();
+      setUser(updatedUser);
+      setError("");
+      alert("Profil sikeresen frissítve!");
       setEditMode(false);
     } catch (err) {
-      console.error('Mentési hiba:', err);
+      setError("Hálózati hiba történt.");
     }
-  };
+  };    
 
   const handleCancel = () => {
     if (user) {
@@ -147,52 +158,22 @@ const Profile: React.FC = () => {
       <h2>Profilom</h2>
       <div className="profile-card">
         <label>Név</label>
-        <input
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="name" value={formData.name} onChange={handleChange} disabled={!editMode} />
 
         <label>Email</label>
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="email" value={formData.email} onChange={handleChange} disabled={!editMode} />
 
         <label>Telefonszám</label>
-        <input
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="phone" value={formData.phone} onChange={handleChange} disabled={!editMode} />
 
         <label>Ország</label>
-        <input
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="country" value={formData.country} onChange={handleChange} disabled={!editMode} />
 
         <label>Megye</label>
-        <input
-          name="county"
-          value={formData.county}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="county" value={formData.county} onChange={handleChange} disabled={!editMode} />
 
         <label>Város</label>
-        <input
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          disabled={!editMode}
-        />
+        <input name="city" value={formData.city} onChange={handleChange} disabled={!editMode} />
 
         {user.userType === 'provider' && (
           <>
@@ -202,7 +183,7 @@ const Profile: React.FC = () => {
                 <label key={spec.id} className="checkbox-label">
                   <input
                     type="checkbox"
-                    checked={formData.specs.includes(spec.id)}
+                    checked={formData.specs?.includes(spec.id) || false}
                     onChange={() => toggleSpec(spec.id)}
                     disabled={!editMode}
                   />
@@ -223,6 +204,8 @@ const Profile: React.FC = () => {
             <button onClick={() => setEditMode(true)}>Szerkesztés</button>
           )}
         </div>
+
+        {message && <p className="status-message">{message}</p>}
       </div>
     </div>
   );
