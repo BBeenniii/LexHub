@@ -25,11 +25,13 @@
     }
 
     .login-feedback.success {
-    color: green;
+    border-left: 6px solid #4ade80;
+    border-right: 6px solid #4ade80;
     }
 
     .login-feedback.error {
-    color: red;
+    border-left: 6px solid #f87171;
+    border-right: 6px solid #f87171;
     }
 
     .login-form {

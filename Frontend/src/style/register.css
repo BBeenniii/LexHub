@@ -25,11 +25,13 @@ body {
 }
 
 .register-feedback.success {
-  color: green;
+  border-left: 6px solid #f87171;
+  border-right: 6px solid #f87171;
 }
 
 .register-feedback.error {
-  color: red;
+  border-left: 6px solid #f87171;
+  border-right: 6px solid #f87171;
 }
 
 
