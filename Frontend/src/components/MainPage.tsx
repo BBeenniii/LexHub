@@ -10,7 +10,7 @@ const MainPage: React.FC = () => {
         <div className="text-center">
           <h1 className="display-4 animated-title">LexHub</h1>
           <p className="lead animated-text">
-            Találjon jogis képviselőt, bárhol, bármilyen esetre!
+            Találjon jogi képviselőt, bárhol, bármilyen esetre!
           </p>
         </div>
       </div>
