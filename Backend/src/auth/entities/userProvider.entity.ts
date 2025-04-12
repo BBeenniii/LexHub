@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { LawyerType } from './lawyerType.entity';
 
 @Entity('userProvider')
 export class UserProvider {
@@ -39,7 +40,7 @@ export class UserProvider {
   kasz: string;
 
   @Column('text', { nullable: true })
-  specs: string;
+  specs: string;  
 
   @Column('decimal', { precision: 10, scale: 6, nullable: true })
   lat: number;

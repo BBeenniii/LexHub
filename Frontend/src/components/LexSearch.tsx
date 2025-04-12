@@ -33,8 +33,16 @@ const LexSearch: React.FC = () => {
       setLawyerTypes(res.data);
     });
 
-    const storedUser = getUser();
-    if (storedUser) setUser(storedUser);
+    const storedUser = getUser() as User;
+    if (storedUser) {
+      setUser({
+        ...storedUser,
+        phone: storedUser.phone || '',
+        country: storedUser.country || '',
+        county: storedUser.county || '',
+        city: storedUser.city || ''
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -55,56 +63,65 @@ const LexSearch: React.FC = () => {
       alert('Válassz szakterületet!');
       return;
     }
-
-    const query: any = { specialtyId: selectedSpecialty };
-
+  
     setSearched(true);
-
-    if (locationType === 'nearby') {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const { latitude, longitude } = pos.coords;
-            query.lat = latitude;
-            query.lng = longitude;
-            const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
-            setLawyers(res.data);
-          },
-          async () => {
-            const fallbackCounty = user?.county ?? 'Pest';
-            const fallbackCity = user?.city ?? 'Budapest';
-            query.county = fallbackCounty;
-            query.city = fallbackCity;
-            const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
-            setLawyers(res.data);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          }
-        );
-      } else {
-        console.warn("[WARNING]: A böngésződ nem támogatja a geolocation API-t");
+  
+    const query: any = { specialtyId: selectedSpecialty };
+  
+    try {
+      if (locationType === 'nearby') {
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              const { latitude, longitude } = pos.coords;
+              query.lat = latitude;
+              query.lng = longitude;
+  
+              const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
+              setLawyers(res.data);
+            },
+            async () => {
+              const fallbackCounty = user?.county;
+              if (!fallbackCounty) {
+                alert("Nem sikerült meghatározni a helyet.");
+                return;
+              }
+  
+              query.county = fallbackCounty;
+              const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
+              setLawyers(res.data);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+            }
+          );
+        } else {
+          alert("A böngésződ nem támogatja a helymeghatározást.");
+        }
+      } else if (locationType === 'county') {
+        if (!county.trim()) {
+          alert("Adj meg egy megyét!");
+          return;
+        }
+        query.county = county.trim();
+        const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
+        setLawyers(res.data);
+      } else if (locationType === 'city') {
+        if (!city.trim()) {
+          alert("Adj meg egy várost!");
+          return;
+        }
+        query.city = city.trim();
+        const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
+        setLawyers(res.data);
       }
-    } else if (locationType === 'county') {
-      if (!county) {
-        alert("Adj meg egy megyét!");
-        return;
-      }
-      query.county = county;
-      const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
-      setLawyers(res.data);
-    } else if (locationType === 'city') {
-      if (!city) {
-        alert("Adj meg egy várost!");
-        return;
-      }
-      query.city = city;
-      const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
-      setLawyers(res.data);
+    } catch (err) {
+      console.error("[ERROR]: Keresési hiba", err);
+      alert("Hiba történt a keresés során. Ellenőrizd az adatok helyességét.");
     }
-  };
+  };  
 
   const handleStartChat = async (providerId: number, providerName: string) => {
     const user = getUser();
@@ -132,70 +149,61 @@ const LexSearch: React.FC = () => {
   };
 
   return (
-    <>
-    
-      <div className="main-page lexsearch-content">
+    <div className="main-page lexsearch-content">
       <div className="filter-row">
+        <div className="search-card">Ügyvéd keresés</div>
 
-        <div className="search-card">
-          Ügyvéd keresés
+        <div className="filter-group">
+          <label>Szakterület:</label>
+          <select value={selectedSpecialty ?? ''} onChange={(e) => setSelectedSpecialty(Number(e.target.value))}>
+            <option value="">-- Válassz --</option>
+            {lawyerTypes.map(type => (
+              <option key={type.id} value={type.id}>{type.type}</option>
+            ))}
+          </select>
         </div>
 
-          <div className="filter-group">
-            <label>Szakterület:</label>
-            <select
-              value={selectedSpecialty ?? ''}
-              onChange={(e) => setSelectedSpecialty(Number(e.target.value))}
-            >
-              <option value="">-- Válassz --</option>
-              {lawyerTypes.map(type => (
-                <option key={type.id} value={type.id}>{type.type}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Szűrés hely szerint:</label>
-            <select value={locationType} onChange={(e) => setLocationType(e.target.value as any)}>
-              <option value="nearby">Közelemben</option>
-              <option value="county">Megye szerint</option>
-              <option value="city">Város szerint</option>
-            </select>
-          </div>
-
-          {locationType === 'county' && (
-            <div className="filter-group">
-              <label>Megye:</label>
-              <input type="text" value={county} onChange={(e) => setCounty(e.target.value)} />
-            </div>
-          )}
-
-          {locationType === 'city' && (
-            <div className="filter-group">
-              <label>Város:</label>
-              <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
-            </div>
-          )}
-
-          <button onClick={handleSearch} className="search-btn">Keresés</button>
-        </div><br></br>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-          {searched && lawyers.length === 0 && (
-            <p className="col-span-full text-center text-gray-200">Nincs megjeleníthető ügyvéd.</p>
-          )}
-          {lawyers.map(lawyer => (
-            <div key={lawyer.id} className="lawyer-card">
-              <h4>{lawyer.name}</h4>
-              <p>{lawyer.email}</p>
-              <p>{lawyer.phone}</p>
-              <p>{lawyer.city}, {lawyer.country}</p>
-              <button onClick={() => handleStartChat(lawyer.id, lawyer.name)}>Beszélgetés</button>
-            </div>
-          ))}
+        <div className="filter-group">
+          <label>Szűrés hely szerint:</label>
+          <select value={locationType} onChange={(e) => setLocationType(e.target.value as any)}>
+            <option value="nearby">Közelemben</option>
+            <option value="county">Megye szerint</option>
+            <option value="city">Város szerint</option>
+          </select>
         </div>
+
+        {locationType === 'county' && (
+          <div className="filter-group">
+            <label>Megye:</label>
+            <input type="text" value={county} onChange={(e) => setCounty(e.target.value)} />
+          </div>
+        )}
+
+        {locationType === 'city' && (
+          <div className="filter-group">
+            <label>Város:</label>
+            <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
+          </div>
+        )}
+
+        <button onClick={handleSearch} className="search-btn">Keresés</button>
       </div>
-    </>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+        {searched && lawyers.length === 0 && (
+          <p className="col-span-full text-center text-gray-200">Nincs megjeleníthető ügyvéd.</p>
+        )}
+        {lawyers.map(lawyer => (
+          <div key={lawyer.id} className="lawyer-card">
+            <h4>{lawyer.name}</h4>
+            <p>{lawyer.email}</p>
+            <p>{lawyer.phone}</p>
+            <p>{lawyer.city}, {lawyer.country}</p>
+            <button onClick={() => handleStartChat(lawyer.id, lawyer.name)}>Beszélgetés</button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
