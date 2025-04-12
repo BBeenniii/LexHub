@@ -1,45 +1,46 @@
-import { Controller, Get, Post, Body, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, BadRequestException, UsePipes, ValidationPipe, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { MessagesService } from './messages.service';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { StartConversationDto } from './dto/start-conversation.dto';
 
 @Controller('messages')
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
-  @Get(':conversationId')
-  getMessagesForConversation(@Param('conversationId') conversationId: string) {
-    const id = Number(conversationId);
-    if (isNaN(id)) {
-      throw new BadRequestException('Invalid conversation ID');
+  @Post('start')
+  async startConversation(@Body() dto: StartConversationDto) {
+    const conversation = await this.messagesService.getOrCreateConversation(dto.seekerId, dto.providerId);
+    return { conversationId: conversation.id };
+  } 
+
+  @Get('conversation/:seekerId/:providerId')
+  async getConversationId(
+    @Param('seekerId', ParseIntPipe) seekerId: number,
+    @Param('providerId', ParseIntPipe) providerId: number,
+  ) {
+    const conversation = await this.messagesService.getOrCreateConversation(seekerId, providerId);
+    return { conversationId: conversation.id };
+  }
+
+  @Get('conversations/:userType/:userId')
+  async getUserConversations(
+    @Param('userType') userType: 'seeker' | 'provider',
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    if (!['seeker', 'provider'].includes(userType)) {
+      throw new NotFoundException('Ismeretlen felhasználótípus');
     }
-  
-    return this.messagesService.getMessagesForConversation(id);
+    return this.messagesService.getUserConversations(userType, userId);
+  }
+
+  @Get(':conversationId')
+  async getMessagesForConversation(@Param('conversationId', ParseIntPipe) conversationId: number) {
+    return this.messagesService.getMessagesForConversation(conversationId);
   }
 
   @Post()
-  createMessage(@Body() body: {
-    conversationId: number;
-    senderId: number;
-    receiverId: number;
-    text: string; 
-  }) {
-    return this.messagesService.createMessage(body);
-  }
-
-  @Post('start')
-  startConversation(@Body() body: { seekerId: number; providerId: number }) {
-    return this.messagesService.startConversation(body.seekerId, body.providerId);
-  }
-
-  @Get('conversations/:role/:userId')
-  getUserConversations(@Param('role') role: 'seeker' | 'provider', @Param('userId') userId: string) {
-    return this.messagesService.getUserConversations(role, Number(userId));
-  }
-
-  @Get('conversation/:seekerId/:providerId')
-  getOrCreateConversation(
-    @Param('seekerId') seekerId: string,
-    @Param('providerId') providerId: string,
-  ) {
-    return this.messagesService.getOrCreateConversation(Number(seekerId), Number(providerId));
+  async createMessage(@Body() dto: CreateMessageDto) {
+    return this.messagesService.createMessage(dto);
   }
 }

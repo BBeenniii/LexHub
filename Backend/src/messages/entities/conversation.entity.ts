@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { UserSeeker } from '../../auth/entities/userSeeker.entity';
 import { UserProvider } from '../../auth/entities/userProvider.entity';
+import { Message } from './message.entity';
 
 @Entity()
 export class Conversation {
@@ -20,4 +21,7 @@ export class Conversation {
   @ManyToOne(() => UserProvider, { eager: false })
   @JoinColumn({ name: 'providerId' })
   provider: UserProvider;
+
+  @OneToMany(() => Message, message => message.conversation)
+  messages: Message[];
 }

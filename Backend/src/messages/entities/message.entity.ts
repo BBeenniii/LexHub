@@ -18,6 +18,6 @@ export class Message {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Conversation, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Conversation, conversation => conversation.messages, { onDelete: 'CASCADE' })
   conversation: Conversation;
 }
