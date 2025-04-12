@@ -117,9 +117,11 @@ const LexSearch: React.FC = () => {
         const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
         setLawyers(res.data);
       }
-    } catch (err) {
+    } catch (err: any) { // kicsit csöves megoldás
       console.error("[ERROR]: Keresési hiba", err);
-      alert("Hiba történt a keresés során. Ellenőrizd az adatok helyességét.");
+
+      const message = err?.response?.data?.message || "Ismeretlen hiba történt!";
+      alert(message);
     }
   };  
 

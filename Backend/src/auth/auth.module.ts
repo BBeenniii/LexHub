@@ -6,6 +6,7 @@ import { UserSeeker } from './entities/userSeeker.entity';
 import { UserProvider } from './entities/userProvider.entity';
 import { LawyerType } from './entities/lawyerType.entity';
 import { ConfigModule } from '@nestjs/config';
+import { LocationValidatorService } from 'src/location-validator/location-validator.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forFeature([UserSeeker, UserProvider, LawyerType]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, LocationValidatorService],
   exports: [AuthService],
 })
 export class AuthModule {}

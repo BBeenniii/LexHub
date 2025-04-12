@@ -12,6 +12,7 @@ import { RegisterProviderDto } from './dto/register-provider.dto';
 import { RegisterSeekerDto } from './dto/register-seeker.dto';
 import { UpdateSeekerDto } from './dto/update-seeker.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
+import { LocationValidatorService } from 'src/location-validator/location-validator.service';
 
 @Injectable()
 export class AuthService {
@@ -20,12 +21,23 @@ export class AuthService {
     @InjectRepository(UserProvider) private providerRepo: Repository<UserProvider>,
     @InjectRepository(LawyerType) private lawyerTypeRepo: Repository<LawyerType>,
     private configService: ConfigService,
+    private locationValidator: LocationValidatorService
   ) {}
 
   async registerSeeker(dto: RegisterSeekerDto) {
     const existingEmail = await this.seekerRepo.findOne({ where: { email: dto.email } });
-    if (existingEmail) throw new BadRequestException('Ez az email már regisztrálva van!');
+    if (existingEmail) {
+      throw new BadRequestException('Ez az email már regisztrálva van!');
+    }
 
+     // NEW: city & county validáció
+    if (dto.city || dto.county) {
+      console.log("Validating city and county:", dto.city, dto.county);
+      await this.locationValidator.validateCityAndCounty(
+        dto.city ?? '',
+        dto.county ?? ''
+      );
+    }
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const seeker = this.seekerRepo.create({ ...dto, password: hashedPassword });
     await this.seekerRepo.save(seeker);
@@ -57,6 +69,14 @@ export class AuthService {
       console.warn('[WARNING]: Geocoding sikertelen:', err);
     }
 
+    // NEW: city & county validáció
+    if (dto.city || dto.county) {
+      console.log("Validating city and county:", dto.city, dto.county);
+      await this.locationValidator.validateCityAndCounty(
+        dto.city ?? '',
+        dto.county ?? ''
+      );
+    }
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const provider = new UserProvider();
     Object.assign(provider, {
@@ -115,6 +135,15 @@ export class AuthService {
     };
 
     await checkEmail(updateData.email ?? '', id);
+
+    // NEW: city & county validáció
+    if (updateData.city || updateData.county) {
+      console.log("Validating city and county:", updateData.city, updateData.county);
+      await this.locationValidator.validateCityAndCounty(
+        updateData.city ?? '',
+        updateData.county ?? ''
+      );
+    }
 
     const seeker = await this.seekerRepo.findOne({ where: { id } });
     if (seeker) {

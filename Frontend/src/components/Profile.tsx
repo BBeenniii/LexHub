@@ -117,6 +117,7 @@ const Profile: React.FC = () => {
       if (!res.ok) {
         const error = await res.json();
         setError("Mentési hiba: " + (error.message || "Ismeretlen hiba."));
+        alert("Mentési hiba: " + (error.message || "Ismeretlen hiba."));
         return;
       }
   
