@@ -27,6 +27,8 @@ const LexSearch: React.FC = () => {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [searched, setSearched] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isError, setIsError] = useState<boolean | null>(null);
 
   useEffect(() => {
     axios.get('http://localhost:3001/auth/lawyertypes').then(res => {
@@ -60,14 +62,18 @@ const LexSearch: React.FC = () => {
 
   const handleSearch = async () => {
     if (!selectedSpecialty) {
-      alert('Válassz szakterületet!');
+      setFeedbackMessage('Válassz szakterületet!');
+      setIsError(true);
+      hideFeedbackLater();
       return;
     }
-  
+
     setSearched(true);
-  
+    setFeedbackMessage('');
+    setIsError(null);
+
     const query: any = { specialtyId: selectedSpecialty };
-  
+
     try {
       if (locationType === 'nearby') {
         if ('geolocation' in navigator) {
@@ -76,20 +82,32 @@ const LexSearch: React.FC = () => {
               const { latitude, longitude } = pos.coords;
               query.lat = latitude;
               query.lng = longitude;
-  
+
               const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
               setLawyers(res.data);
+              if (res.data.length === 0) {
+                setFeedbackMessage('Nincs megjeleníthető ügyvéd.');
+                setIsError(false);
+                hideFeedbackLater();
+              }
             },
             async () => {
               const fallbackCounty = user?.county;
               if (!fallbackCounty) {
-                alert("Nem sikerült meghatározni a helyet.");
+                setFeedbackMessage('Nem sikerült meghatározni a helyet.');
+                setIsError(true);
+                hideFeedbackLater();
                 return;
               }
-  
+
               query.county = fallbackCounty;
               const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
               setLawyers(res.data);
+              if (res.data.length === 0) {
+                setFeedbackMessage('Nincs megjeleníthető ügyvéd.');
+                setIsError(false);
+                hideFeedbackLater();
+              }
             },
             {
               enableHighAccuracy: true,
@@ -98,35 +116,62 @@ const LexSearch: React.FC = () => {
             }
           );
         } else {
-          alert("A böngésződ nem támogatja a helymeghatározást.");
+          setFeedbackMessage('A böngésződ nem támogatja a helymeghatározást.');
+          setIsError(true);
+          hideFeedbackLater();
         }
       } else if (locationType === 'county') {
         if (!county.trim()) {
-          alert("Adj meg egy megyét!");
+          setFeedbackMessage('Adj meg egy megyét!');
+          setIsError(true);
+          hideFeedbackLater();
           return;
         }
         query.county = county.trim();
         const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
         setLawyers(res.data);
+        if (res.data.length === 0) {
+          setFeedbackMessage('Nincs megjeleníthető ügyvéd.');
+          setIsError(false);
+          hideFeedbackLater();
+        }
       } else if (locationType === 'city') {
         if (!city.trim()) {
-          alert("Adj meg egy várost!");
+          setFeedbackMessage('Adj meg egy várost!');
+          setIsError(true);
+          hideFeedbackLater();
           return;
         }
         query.city = city.trim();
         const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
         setLawyers(res.data);
+        if (res.data.length === 0) {
+          setFeedbackMessage('Nincs megjeleníthető ügyvéd.');
+          setIsError(false);
+          hideFeedbackLater();
+        }
       }
     } catch (err) {
-      console.error("[ERROR]: Keresési hiba", err);
-      alert("Hiba történt a keresés során. Ellenőrizd az adatok helyességét.");
+      console.error('[ERROR]: Keresési hiba', err);
+      setFeedbackMessage('Hiba történt a keresés során. Ellenőrizd az adatok helyességét.');
+      setIsError(true);
+      hideFeedbackLater();
     }
-  };  
+  };
+
+  const hideFeedbackLater = () => {
+    setTimeout(() => {
+      setFeedbackMessage('');
+      setIsError(null);
+    }, 4000);
+  };
 
   const handleStartChat = async (providerId: number, providerName: string) => {
     const user = getUser();
     if (!user) {
-      alert("Jelentkezzen be a chat használatához!");
+      setFeedbackMessage('Jelentkezzen be a chat használatához!');
+      setIsError(true);
+      hideFeedbackLater();
       return;
     }
 
@@ -134,7 +179,7 @@ const LexSearch: React.FC = () => {
       const res = await fetch(`http://localhost:3001/messages/conversation/${user.id}/${providerId}`);
       const data = await res.json();
 
-      navigate("/chat", {
+      navigate('/chat', {
         state: {
           selectedConversationId: data.conversationId,
           participant: {
@@ -144,7 +189,7 @@ const LexSearch: React.FC = () => {
         },
       });
     } catch (err) {
-      console.error("[ERROR]: Hiba a beszélgetés indításakor:", err);
+      console.error('[ERROR]: Hiba a beszélgetés indításakor:', err);
     }
   };
 
@@ -190,9 +235,6 @@ const LexSearch: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-        {searched && lawyers.length === 0 && (
-          <p className="col-span-full text-center text-gray-200">Nincs megjeleníthető ügyvéd.</p>
-        )}
         {lawyers.map(lawyer => (
           <div key={lawyer.id} className="lawyer-card">
             <h4>{lawyer.name}</h4>
@@ -203,6 +245,12 @@ const LexSearch: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {feedbackMessage && (
+        <p className={`search-feedback ${isError ? 'error' : 'info'}`}>
+          {feedbackMessage}
+        </p>
+      )}
     </div>
   );
 };

@@ -100,6 +100,34 @@ transition: background 0.3s ease;
 background-color: rgba(255, 255, 255, 0.5);
 } 
 
+.search-feedback {
+  margin-top: 32px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 100%;
+  width: 100%;
+  color: #d1d5db;
+}
+
+.search-feedback.error {
+  color: #f87171;
+  border-left: 6px solid #f87171;
+  border-right: 6px solid #f87171;
+}
+
+.search-feedback.info {
+  color: #d1d5db;
+  border-left: 6px solid #9ca3af;
+}
+
+
+
 .lawyer-card {
 background: rgba(255, 255, 255, 0.08);
 padding: 20px;
@@ -107,6 +135,7 @@ border-radius: 12px;
 box-shadow: 0 0 20px rgba(8, 7, 16, 0.4);
 backdrop-filter: blur(6px);
 color: white;
+margin-top: 20px;
 }
 
 .lawyer-card button {
