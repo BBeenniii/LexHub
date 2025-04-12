@@ -30,8 +30,8 @@
     }
 
     .login-feedback.error {
-    border-left: 6px solid #f87171;
-    border-right: 6px solid #f87171;
+        border-left: 6px solid #f87171;
+        border-right: 6px solid #f87171;
     }
 
     .login-form {

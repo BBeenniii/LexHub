@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../context/SocketContext';
 import '../style/Chat.css';
 
@@ -21,6 +21,7 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
   const socket = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!socket) return;
@@ -51,6 +52,10 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
       socket.off('chatUpdated', handleUpdate);
     };
   }, [socket, conversationId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const sendMessage = () => {
     if (!input.trim() || !socket) return;
@@ -85,6 +90,7 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
             </div>
           );
         })}
+        <div ref={bottomRef} />
       </div>
 
       <div className="chat-input">

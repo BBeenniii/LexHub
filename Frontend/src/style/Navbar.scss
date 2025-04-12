@@ -45,6 +45,19 @@ header {
   color: #fff;
 }
 
+.logout-button {
+  transition: color 0.3s ease;
+}
+
+.logout-button:hover {
+  color: red;
+}
+
+.logout-button:hover {
+  color: red;
+}
+
+
 .menu-toggle {
   display: none;
   background: none;
