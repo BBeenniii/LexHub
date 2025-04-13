@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, IsArray, Matches } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsArray, Matches, IsNotEmpty, ArrayNotEmpty } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateProviderDto {
@@ -38,6 +38,7 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A telefonszám nem hagyható üresen.' })
   phone?: string;
 
   @ApiPropertyOptional({
@@ -46,6 +47,7 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'Az ország nem hagyható üresen.' })
   country?: string;
 
   @ApiPropertyOptional({
@@ -54,6 +56,7 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A megye nem hagyható üresen.' })
   county?: string;
 
   @ApiPropertyOptional({
@@ -62,6 +65,7 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A város nem hagyható üresen.' })
   city?: string;
 
   @ApiPropertyOptional({
@@ -70,6 +74,7 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A Kamarai Azonosító Szám nem hagyható üresen.' })
   kasz?: string;
 
   @ApiPropertyOptional({
@@ -79,5 +84,6 @@ export class UpdateProviderDto {
   })
   @IsOptional()
   @IsArray()
+  @ArrayNotEmpty({ message: 'Leglább egy szakterületet meg kell adnia.' })
   specs?: number[];
 }

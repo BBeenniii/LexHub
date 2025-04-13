@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateSeekerDto {
@@ -38,6 +38,7 @@ export class UpdateSeekerDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A telefonszám nem hagyható üresen.' })
   phone?: string;
 
   @ApiPropertyOptional({
@@ -45,6 +46,7 @@ export class UpdateSeekerDto {
     example: 'Magyarország',
   })
   @IsOptional()
+  @IsNotEmpty({ message: 'Az ország nem hagyható üresen.' })
   @IsString()
   country?: string;
 
@@ -54,6 +56,7 @@ export class UpdateSeekerDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A megye nem hagyható üresen.' })
   county?: string;
 
   @ApiPropertyOptional({
@@ -62,5 +65,6 @@ export class UpdateSeekerDto {
   })
   @IsOptional()
   @IsString()
+  @IsNotEmpty({ message: 'A város nem hagyható üresen.' })
   city?: string;
 }
