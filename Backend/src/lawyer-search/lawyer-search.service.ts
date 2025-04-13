@@ -14,7 +14,8 @@ export class LawyerSearchService {
   ) {}
     async searchLawyers(dto: LawyerSearchDto) {
       const qb = this.providerRepo.createQueryBuilder('provider');
-    
+      console.log("🎯 DTO érkezett:", dto);
+      
       if (dto.specialtyId) {
         qb.andWhere('provider.specs LIKE :specMatch', {
           specMatch: `[%${dto.specialtyId}%]`,
@@ -22,8 +23,15 @@ export class LawyerSearchService {
       }
     
       if (dto.lat && dto.lng) {
-        qb.orderBy(`ST_Distance_Sphere(POINT(provider.lng, provider.lat), POINT(:lng, :lat))`)
-          .setParameters({ lat: dto.lat, lng: dto.lng });
+        console.log("📍 Lokációs (lat/lng) keresés");
+        qb.addSelect(`
+            ST_Distance_Sphere(
+              POINT(provider.lng, provider.lat),
+              POINT(:lng, :lat)
+            ) AS distance`)
+          .setParameters({ lat: dto.lat, lng: dto.lng })
+          .having('distance <= 30000') // max 30 km
+          .orderBy('distance', 'ASC');
       } else if (dto.county) {
         await this.locationValidator.validateCounty(dto.county);
         qb.andWhere('provider.county = :county', { county: dto.county });
@@ -32,7 +40,7 @@ export class LawyerSearchService {
         qb.andWhere('provider.city = :city', { city: dto.city });
       }
     
-      //console.log("Generált SQL:", qb.getSql());
+      console.log("Generált SQL:", qb.getSql());
       return qb.getMany();
     }    
 
