@@ -25,8 +25,8 @@ body {
 }
 
 .register-feedback.success {
-  border-left: 6px solid #f87171;
-  border-right: 6px solid #f87171;
+  border-left: 6px solid #4ade80;
+  border-right: 6px solid #4ade80;
 }
 
 .register-feedback.error {

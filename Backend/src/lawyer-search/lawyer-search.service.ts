@@ -28,7 +28,7 @@ export class LawyerSearchService {
         await this.locationValidator.validateCounty(dto.county);
         qb.andWhere('provider.county = :county', { county: dto.county });
       } else if (dto.city) {
-        await this.locationValidator.validateCounty(dto.city);
+        await this.locationValidator.validateCity(dto.city);
         qb.andWhere('provider.city = :city', { city: dto.city });
       }
     
