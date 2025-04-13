@@ -6,6 +6,8 @@ import '../style/Login.css';
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -15,11 +17,16 @@ const Login: React.FC = () => {
         password,
       });
 
-      alert(res.data.message);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      navigate('/');
+      setFeedbackMessage('Sikeres bejelentkezés!');
+      setIsSuccess(true);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Hiba történt a bejelentkezés során.');
+      setFeedbackMessage(err.response?.data?.message || 'Hiba történt a bejelentkezés során.');
+      setIsSuccess(false);
     }
   };
 
@@ -34,6 +41,12 @@ const Login: React.FC = () => {
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
       <button className="buttonski" onClick={handleLogin}>Bejelentkezés</button>
+
+      {feedbackMessage && (
+        <p className={`login-feedback ${isSuccess ? 'success' : 'error'}`}>
+          {feedbackMessage}
+        </p>
+      )}
     </div>
   );
 };

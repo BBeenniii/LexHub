@@ -1,17 +1,33 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMessageDto {
-    @IsString()
-    @IsNotEmpty({ message: 'Üres üzenetet nem lehet küldeni!' })
-    text: string;
+  @ApiProperty({
+    description: 'Az üzenet szövege. Nem lehet üres.',
+    example: 'Üdvözlöm, szeretnék érdeklődni egy ügy kapcsán.',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'Üres üzenetet nem lehet küldeni!' })
+  text: string;
 
-    @IsNumber()
-    conversationId: number;
+  @ApiProperty({
+    description: 'A beszélgetés azonosítója, amelyhez az üzenet tartozik.',
+    example: 12,
+  })
+  @IsNumber({}, { message: 'A conversationId számnak kell lennie.' })
+  conversationId: number;
 
-    @IsNumber()
-    senderId: number;
+  @ApiProperty({
+    description: 'Az üzenet küldőjének azonosítója.',
+    example: 5,
+  })
+  @IsNumber({}, { message: 'A senderId számnak kell lennie.' })
+  senderId: number;
 
-    @IsNumber()
-    receiverId: number;
+  @ApiProperty({
+    description: 'Az üzenet fogadójának azonosítója.',
+    example: 8,
+  })
+  @IsNumber({}, { message: 'A receiverId számnak kell lennie.' })
+  receiverId: number;
 }

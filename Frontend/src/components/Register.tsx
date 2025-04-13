@@ -8,6 +8,8 @@ const Register: React.FC = () => {
   const [providerType, setProviderType] = useState<'individual' | 'company'>('individual');
   const [specialtiesEnabled, setSpecialtiesEnabled] = useState(false);
   const [lawyerTypes, setLawyerTypes] = useState<{ id: number; type: string }[]>([]);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     companyName: '',
@@ -47,30 +49,35 @@ const Register: React.FC = () => {
   const validateInput = () => {
     const nameParts = formData.name.trim().split(' ');
     if (nameParts.length < 2 || nameParts.some(part => part.length < 2)) {
-      alert('A teljes névnek legalább két tagból kell állnia, és minden tagnak legalább 2 betűből.');
+      setFeedbackMessage('A teljes névnek legalább két tagból kell állnia, és minden tagnak legalább 2 betűből.');
+      setIsSuccess(false);
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      alert('Érvénytelen email cím.');
+      setFeedbackMessage('Érvénytelen email cím.');
+      setIsSuccess(false);
       return false;
     }
 
     const phoneRegex = /^\+?[0-9]+$/;
     if (!phoneRegex.test(formData.phone)) {
-      alert('A telefonszám csak számokat és opcionálisan + jelet tartalmazhat.');
+      setFeedbackMessage('A telefonszám csak számokat és opcionálisan + jelet tartalmazhat.');
+      setIsSuccess(false);
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('A jelszavak nem egyeznek.');
+      setFeedbackMessage('A jelszavak nem egyeznek.');
+      setIsSuccess(false);
       return false;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(formData.password)) {
-      alert('A jelszónak legalább 8 karakter hosszúnak kell lennie, és tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert.');
+      setFeedbackMessage('A jelszónak legalább 8 karakter hosszúnak kell lennie, kis- és nagybetűt, számot és speciális karaktert kell tartalmaznia.');
+      setIsSuccess(false);
       return false;
     }
 
@@ -79,9 +86,9 @@ const Register: React.FC = () => {
 
   const handleRegister = async () => {
     if (!validateInput()) return;
-  
+
     const endpoint = userType === 'seeker' ? 'register/seeker' : 'register/provider';
-  
+
     const postData: any = {
       name: formData.name,
       email: formData.email,
@@ -91,7 +98,7 @@ const Register: React.FC = () => {
       city: formData.city,
       password: formData.password,
     };
-  
+
     if (userType === 'provider') {
       postData.kasz = formData.kasz;
       postData.providerType = providerType;
@@ -100,15 +107,17 @@ const Register: React.FC = () => {
       }
       postData.specs = specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1);
     }
-  
+
     try {
       await axios.post(`http://localhost:3001/auth/${endpoint}`, postData);
-      alert('Sikeres regisztráció!');
-      navigate('/login');
+      setFeedbackMessage('Sikeres regisztráció!');
+      setIsSuccess(true);
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Hiba történt a regisztráció során.');
+      setFeedbackMessage(err.response?.data?.message || 'Hiba történt a regisztráció során.');
+      setIsSuccess(false);
     }
-  };  
+  };
 
   return (
     <div className="register-container">
@@ -144,23 +153,23 @@ const Register: React.FC = () => {
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {lawyerTypes.map(lawyer => (
-            <label
-              key={lawyer.id}
-              className="flex items-center bg-white/10 backdrop-blur-md p-3 rounded-lg shadow-md text-white text-sm gap-2 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                value={lawyer.id}
-                onChange={handleSpecialtiesChange}
-                disabled={!specialtiesEnabled && formData.specs.length >= 1}
-                checked={formData.specs.includes(lawyer.id)}
-                className="w-4 h-4 accent-white"
-              />
-              {lawyer.type}
-            </label>
-          ))}
-        </div>
+            {lawyerTypes.map(lawyer => (
+              <label
+                key={lawyer.id}
+                className="flex items-center bg-white/10 backdrop-blur-md p-3 rounded-lg shadow-md text-white text-sm gap-2 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value={lawyer.id}
+                  onChange={handleSpecialtiesChange}
+                  disabled={!specialtiesEnabled && formData.specs.length >= 1}
+                  checked={formData.specs.includes(lawyer.id)}
+                  className="w-4 h-4 accent-white"
+                />
+                {lawyer.type}
+              </label>
+            ))}
+          </div>
         </>
       )}
 
@@ -189,6 +198,12 @@ const Register: React.FC = () => {
       <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
 
       <button onClick={handleRegister}>Regisztráció</button>
+
+      {feedbackMessage && (
+        <p className={`register-feedback ${isSuccess ? 'success' : 'error'}`}>
+          {feedbackMessage}
+        </p>
+      )}
     </div>
   );
 };

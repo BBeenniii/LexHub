@@ -24,10 +24,10 @@ const Profile: React.FC = () => {
   const storedUser = getUser();
   const [user, setUser] = useState<UserData | null>(null);
   const [formData, setFormData] = useState({ ...user });
-  const [error, setError] = useState("");
   const [lawyerTypes, setLawyerTypes] = useState<LawyerType[]>([]);
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!storedUser) return;
@@ -81,55 +81,74 @@ const Profile: React.FC = () => {
           : [...prev.specs, specId]
         : [specId],
     }));
-  };  
+  };
 
   const handleSave = async () => {
-    if (!user) return;
-  
-    const updatedFields: any = {};
-  
-    if (formData.name !== user.name) updatedFields.name = formData.name;
-    if (formData.email !== user.email) updatedFields.email = formData.email;
-    if (formData.phone !== user.phone) updatedFields.phone = formData.phone;
-    if (formData.country !== user.country) updatedFields.country = formData.country;
-    if (formData.county !== user.county) updatedFields.county = formData.county;
-    if (formData.city !== user.city) updatedFields.city = formData.city;
-  
-    if (
-      user.userType === "provider" &&
-      JSON.stringify(formData.specs) !== JSON.stringify(user.specs)
-    ) {
-      updatedFields.specs = formData.specs;
-    }
-  
-    if (Object.keys(updatedFields).length === 0) {
-      setError("Nincs módosított adat.");
+  if (!user) return;
+
+  const updatedFields: any = {};
+
+  if (formData.name !== user.name) updatedFields.name = formData.name;
+  if (formData.email !== user.email) updatedFields.email = formData.email;
+  if (formData.phone !== user.phone) updatedFields.phone = formData.phone;
+  if (formData.country !== user.country) updatedFields.country = formData.country;
+  if (formData.county !== user.county) updatedFields.county = formData.county;
+  if (formData.city !== user.city) updatedFields.city = formData.city;
+
+  if (
+    user.userType === 'provider' &&
+    JSON.stringify(formData.specs) !== JSON.stringify(user.specs)
+  ) {
+    updatedFields.specs = formData.specs;
+  }
+
+  if (Object.keys(updatedFields).length === 0) {
+    setMessage('Nincs módosított adat.');
+    setIsSuccess(false);
+    setTimeout(() => {
+      setMessage('');
+      setIsSuccess(null);
+    }, 4000);
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3001/auth/profile/${user.userType}/${user.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedFields),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      setMessage('Mentési hiba: ' + (error.message || 'Ismeretlen hiba.'));
+      setIsSuccess(false);
+      setTimeout(() => {
+        setMessage('');
+        setIsSuccess(null);
+      }, 4000);
       return;
     }
-  
-    try {
-      const res = await fetch(`http://localhost:3001/auth/profile/${user.userType}/${user.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedFields),
-      });
-  
-      if (!res.ok) {
-        const error = await res.json();
-        setError("Mentési hiba: " + (error.message || "Ismeretlen hiba."));
-        alert("Mentési hiba: " + (error.message || "Ismeretlen hiba."));
-        return;
-      }
-  
-      const updatedUser = await res.json();
-      setUser(updatedUser);
-      setError("");
-      alert("Profil sikeresen frissítve!");
-      setEditMode(false);
-    } catch (err) {
-      setError("Hálózati hiba történt.");
-    }
-  };    
+
+    const updatedUser = await res.json();
+    setUser(updatedUser);
+    setMessage('Profil sikeresen frissítve!');
+    setIsSuccess(true);
+    setEditMode(false);
+    setTimeout(() => {
+      setMessage('');
+      setIsSuccess(null);
+    }, 4000);
+  } catch (err) {
+    setMessage('Hálózati hiba történt.');
+    setIsSuccess(false);
+    setTimeout(() => {
+      setMessage('');
+      setIsSuccess(null);
+    }, 4000);
+  }
+};
+
 
   const handleCancel = () => {
     if (user) {
@@ -144,6 +163,8 @@ const Profile: React.FC = () => {
       });
     }
     setEditMode(false);
+    setMessage('');
+    setIsSuccess(null);
   };
 
   if (!user) {
@@ -206,7 +227,11 @@ const Profile: React.FC = () => {
           )}
         </div>
 
-        {message && <p className="status-message">{message}</p>}
+        {message && (
+          <p className={`profile-feedback ${isSuccess ? 'success' : 'error'}`}>
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );
