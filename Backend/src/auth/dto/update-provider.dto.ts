@@ -30,7 +30,16 @@ export class UpdateProviderDto {
     message:
       'A jelszónak legalább 8 karakterből kell állnia, tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert. Szóköz nem lehet benne.',
   })
-  password?: string;
+  newPassword?: string;
+
+  @ApiPropertyOptional({
+    description: 'Jelenlegi/Régi jelszó: az új jelszó mentéséhez, meg kell adni a jelenlegi jelszót.',
+    example: 'RegiJelszo!2025',
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty({ message: 'Az új jelszó mentéséhez a jelenlegi jelszó megadása kötelező.' })
+  currentPassword?: string;
 
   @ApiPropertyOptional({
     description: 'Frissített telefonszám.',

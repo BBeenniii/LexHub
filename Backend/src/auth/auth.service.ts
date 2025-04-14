@@ -24,6 +24,21 @@ export class AuthService {
     private locationValidator: LocationValidatorService
   ) {}
 
+  // Mivel csak magyarországon "kompatiblis" ezért az ország statikus
+  private async getCoordinatesFromCity(city: string, country = 'Hungary'): Promise<{ lat: number, lng: number }> {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${city},${country}&key=${this.configService.get('OPENCAGE_API_KEY')}`;
+  
+    const geoRes = await axios.get(url);
+    const result = geoRes.data?.results?.[0];
+  
+    if (!result || !result.geometry) {
+      throw new Error(`Nem sikerült lekérni a koordinátákat: ${city}, ${country}`);
+    }
+  
+    const { lat, lng } = result.geometry;
+    return { lat, lng };
+  }  
+
   async registerSeeker(dto: RegisterSeekerDto) {
     const existingEmail = await this.seekerRepo.findOne({ where: { email: dto.email } });
     if (existingEmail) {
@@ -57,6 +72,7 @@ export class AuthService {
     if (validSpecs.length !== dto.specs.length) throw new BadRequestException('Nem létező szakterület!');
 
     // OpenCage API - szélesség hosszúsághoz
+    /*
     const geoUrl = `https://api.opencagedata.com/geocode/v1/json?q=${dto.city},${dto.country}&key=${this.configService.get('OPENCAGE_API_KEY')}`;
     let lat = null, lng = null;
     try {
@@ -67,8 +83,9 @@ export class AuthService {
       }
     } catch (err) {
       console.warn('[WARNING]: Geocoding sikertelen:', err);
-    }
+    }*/
 
+    const { lat, lng } = await this.getCoordinatesFromCity(dto.city);
     // NEW: city & county validáció
     if (dto.city || dto.county) {
       console.log("Validating city and county:", dto.city, dto.county);
@@ -144,17 +161,53 @@ export class AuthService {
         updateData.county ?? ''
       );
     }
-
+ 
+    // Seeker Profile update
     const seeker = await this.seekerRepo.findOne({ where: { id } });
     if (seeker) {
+      if (updateData.newPassword) {
+        if (!updateData.currentPassword) {
+          throw new BadRequestException('A jelenlegi jelszót is meg kell adni a módosításhoz.');
+        }
+      
+        const isMatch = await bcrypt.compare(updateData.currentPassword, seeker.password);
+        if (!isMatch) {
+          throw new BadRequestException('A megadott jelszó nem egyezik a jelenlegi jelszóval.');
+        }
+      
+        seeker.password = await bcrypt.hash(updateData.newPassword, 10);
+      }
+
       Object.assign(seeker, updateData);
       await this.seekerRepo.save(seeker);
       console.log("[LOG]: SEEKER profile updated")
       return { message: 'A profil frissítve.' };
     }
 
+
+    // Provider Profile update
     const provider = await this.providerRepo.findOne({ where: { id } });
     if (provider) {
+      if (updateData.newPassword) {
+        if (!updateData.currentPassword) {
+          throw new BadRequestException('A jelenlegi jelszót is meg kell adni a módosításhoz.');
+        }
+      
+        const isMatch = await bcrypt.compare(updateData.currentPassword, provider.password);
+        if (!isMatch) {
+          throw new BadRequestException('A megadott jelszó nem egyezik a jelenlegi jelszóval.');
+        }
+      
+        provider.password = await bcrypt.hash(updateData.newPassword, 10);
+      }
+
+      // NEW: Új city esetén változzanak a koordináták
+      if (updateData.city && updateData.city !== provider.city) {
+        const { lat, lng } = await this.getCoordinatesFromCity(updateData.city);
+        provider.lat = lat;
+        provider.lng = lng;
+      }   
+
       Object.assign(provider, {
         ...updateData,
         specs: 'specs' in updateData ? JSON.stringify(updateData.specs) : provider.specs,

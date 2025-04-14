@@ -28,6 +28,8 @@ const Profile: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
 
   useEffect(() => {
     if (!storedUser) return;
@@ -102,6 +104,17 @@ const Profile: React.FC = () => {
     updatedFields.specs = formData.specs;
   }
 
+  // Jelszó változtatás logika
+  if (newPassword) {
+    if (!currentPassword) {
+      setMessage('A jelszó módosításhoz add meg a jelenlegi jelszavad!');
+      setIsSuccess(false);
+      return;
+    }
+    updatedFields.currentPassword = currentPassword;
+    updatedFields.newPassword = newPassword;
+  }
+
   if (Object.keys(updatedFields).length === 0) {
     setMessage('Nincs módosított adat.');
     setIsSuccess(false);
@@ -135,6 +148,8 @@ const Profile: React.FC = () => {
     setMessage('Profil sikeresen frissítve!');
     setIsSuccess(true);
     setEditMode(false);
+    setNewPassword('');
+    setCurrentPassword('');
     setTimeout(() => {
       setMessage('');
       setIsSuccess(null);
@@ -161,6 +176,8 @@ const Profile: React.FC = () => {
         city: user.city || '',
         specs: user.specs || [],
       });
+      setNewPassword('');
+      setCurrentPassword('');
     }
     setEditMode(false);
     setMessage('');
@@ -196,6 +213,12 @@ const Profile: React.FC = () => {
 
         <label>Város</label>
         <input name="city" value={formData.city} onChange={handleChange} disabled={!editMode} />
+
+        <label>Új jelszó</label>
+        <input type="password" name="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} disabled={!editMode} />
+
+        <label>Jelenlegi jelszó</label>
+        <input type="password" name="currentPassword" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} disabled={!editMode} />
 
         {user.userType === 'provider' && (
           <>
