@@ -45,11 +45,18 @@ export class AuthController {
     return this.authService.getLawyerTypes();
   }
 
-  @Get('profile/:id')
-  @ApiOperation({ summary: 'Profil lekérdezése ID alapján' })
+  @Get('profile/seeker/:id')
+  @ApiOperation({ summary: 'Seeker profil lekérdezése' })
   @ApiParam({ name: 'id', type: Number })
-  async getProfile(@Param('id', ParseIntPipe) id: number) {
-    return this.authService.getProfile(id);
+  async getSeekerProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.getSeekerProfile(id);
+  }
+  
+  @Get('profile/provider/:id')
+  @ApiOperation({ summary: 'Provider profil lekérdezése' })
+  @ApiParam({ name: 'id', type: Number })
+  async getProviderProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.getProviderProfile(id);
   }
 
   @Put('profile/seeker/:id')
@@ -60,7 +67,7 @@ export class AuthController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSeekerDto,
   ) {
-    return this.authService.updateProfile(id, dto);
+    return this.authService.updateSeekerProfile(id, dto);
   }
 
   @Put('profile/provider/:id')
@@ -71,6 +78,6 @@ export class AuthController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProviderDto,
   ) {
-    return this.authService.updateProfile(id, dto);
+    return this.authService.updateProviderProfile(id, dto);
   }
 }

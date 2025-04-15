@@ -4,9 +4,10 @@ import { UserProvider } from '../auth/entities/userProvider.entity';
 import { LawyerSearchService } from './lawyer-search.service';
 import { LawyerSearchController } from './lawyer-search.controller';
 import { LocationValidatorService } from 'src/location-validator/location-validator.service';
+import { LawyerType } from 'src/auth/entities/lawyerType.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserProvider])],
+  imports: [TypeOrmModule.forFeature([UserProvider, LawyerType])],
   controllers: [LawyerSearchController],
   providers: [LawyerSearchService, LocationValidatorService],
 })

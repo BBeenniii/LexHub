@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/auth/profile/${storedUser.id}`);
+        const res = await fetch(`http://localhost:3001/auth/profile/${storedUser.userType}/${storedUser.id}`);
         const data = await res.json();
         setUser(data);
         if (!editMode) {
@@ -154,16 +154,15 @@ const Profile: React.FC = () => {
       setMessage('');
       setIsSuccess(null);
     }, 4000);
-  } catch (err) {
-    setMessage('Hálózati hiba történt.');
-    setIsSuccess(false);
-    setTimeout(() => {
-      setMessage('');
-      setIsSuccess(null);
-    }, 4000);
-  }
-};
-
+    } catch (err) {
+      setMessage('Hálózati hiba történt.');
+      setIsSuccess(false);
+      setTimeout(() => {
+        setMessage('');
+        setIsSuccess(null);
+      }, 4000);
+    }
+  };
 
   const handleCancel = () => {
     if (user) {

@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
@@ -7,6 +7,7 @@ export class LoginDto {
     example: 'valaki@example.com',
   })
   @IsEmail({}, { message: 'Érvénytelen email cím.' })
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty({
@@ -15,5 +16,6 @@ export class LoginDto {
   })
   @IsString({ message: 'A jelszó megadása kötelező.' })
   @MinLength(6, { message: 'A jelszónak legalább 6 karakter hosszúnak kell lennie.' })
+  @IsNotEmpty()
   password: string;
 }

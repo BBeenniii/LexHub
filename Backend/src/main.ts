@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -14,6 +14,32 @@ async function bootstrap() {
   app.useGlobalPipes(
   new ValidationPipe({
     whitelist: true,
+    // Rossz property név esetén:
+    forbidNonWhitelisted: true,
+    exceptionFactory: (errors) => {
+      const whitelistErrors = errors.filter(err => err.constraints?.whitelistValidation);
+
+      if (whitelistErrors.length > 0) {
+        const messages = whitelistErrors.map(err =>
+          `A megadott mező nem létezik: ${err.property}`
+        );
+        return new BadRequestException({
+          message: messages,
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+      }
+
+      const otherMessages = errors.flatMap(err =>
+        Object.values(err.constraints || {})
+      );
+    
+      return new BadRequestException({
+        message: otherMessages,
+        error: 'Bad Request',
+        statusCode: 400,
+      });
+    },
     transform: true, 
     transformOptions: {
       enableImplicitConversion: true,

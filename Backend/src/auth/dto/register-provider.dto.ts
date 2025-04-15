@@ -1,13 +1,4 @@
-import {
-    IsEmail,
-    IsString,
-    IsNotEmpty,
-    IsArray,
-    ArrayNotEmpty,
-    ValidateIf,
-    IsIn,
-    Matches,
-  } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty, IsArray, ArrayNotEmpty, ValidateIf, IsIn, Matches, } from 'class-validator';
   import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
   
   export class RegisterProviderDto {
@@ -88,8 +79,9 @@ import {
       example: 'Lex Legal Kft.',
     })
     @ValidateIf((o) => o.providerType === 'company')
-    @IsString({ message: 'Cégnév megadása kötelező, ha céges profilt regisztrál.' })
-    companyName?: string;
+    @IsString()
+    @IsNotEmpty({ message: 'Cégnév megadása kötelező, ha céges profilt regisztrál.' })
+    companyName: string;
   
     @ApiProperty({
       description: 'Kamarai azonosító szám (KASZ).',

@@ -94,5 +94,5 @@ export class UpdateProviderDto {
   @IsOptional()
   @IsArray()
   @ArrayNotEmpty({ message: 'Leglább egy szakterületet meg kell adnia.' })
-  specs?: number[];
+  specs: number[];
 }
