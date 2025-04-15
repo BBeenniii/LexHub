@@ -9,14 +9,16 @@ export class AiChatController {
   constructor(private readonly aiChatService: AiChatService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Jogi tanács kérése AI-tól', description: 'Egy kérdést küld az AI-nak, és visszakap egy jogi tanácsot.' })
+  @ApiOperation({ 
+    summary: 'Jogeset beazonosítása AI segítségével', 
+    description: 'Egy kérdést/leírást küld, az AI (OpenAI API-n keresztül) pedig meghatározza milyen ügyvédet kell keresnie' })
   @ApiBody({ type: AiChatDto })
   @ApiResponse({
     status: 200,
     description: 'Sikeres AI válasz',
     schema: {
       example: {
-        recommendation: 'Az öröklésnél az öröklési jog szerint jársz el, nem a végrendelet szerint.',
+        recommendation: 'Munkajogász',
       },
     },
   })

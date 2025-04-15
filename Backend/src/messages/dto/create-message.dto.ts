@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMessageDto {
@@ -30,4 +30,12 @@ export class CreateMessageDto {
   })
   @IsNumber({}, { message: 'A receiverId számnak kell lennie.' })
   receiverId: number;
+
+  @ApiProperty({
+    description: 'Szerkesztve van e az üzenet, alapból false az értéke.',
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean({ message: 'Az isEdited logikai érték, értéke lehet "true" vagy "false"'})
+  isEdited?: boolean = false;
 }

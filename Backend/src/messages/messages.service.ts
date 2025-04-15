@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
@@ -23,6 +23,7 @@ export class MessagesService {
     private readonly providerRepo: Repository<UserProvider> 
   ) {}
   
+  // getOrCreateConversations
   async getOrCreateConversation(seekerId: number, providerId: number): Promise<Conversation> {
     let conversation = await this.conversationRepo.findOne({
       where: { seekerId, providerId },
@@ -36,6 +37,7 @@ export class MessagesService {
     return conversation;
   }
 
+  // getUserConversations
   async getUserConversations(userType: 'seeker' | 'provider', userId: number) {
     const conversations = await this.conversationRepo.find({
       where: [{ seekerId: userId }, { providerId: userId }],
@@ -87,9 +89,16 @@ export class MessagesService {
       })
     );
   
-    return result;
+    const sorted = result.sort((a, b) => {
+      const aTime = new Date(a.updatedAt).getTime();
+      const bTime = new Date(b.updatedAt).getTime();
+      return bTime - aTime;
+    });
+    
+    return sorted;
   }  
 
+  // getMessagesForConversation
   async getMessagesForConversation(conversationId: number) {
     const exists = await this.conversationRepo.findOne({ where: { id: conversationId } });
     if (!exists) {
@@ -102,6 +111,7 @@ export class MessagesService {
     });
   }
 
+  // createMessage
   async createMessage(data: CreateMessageDto) {
     console.log('[LOG]: createMessage hívva:', data);
 
@@ -120,5 +130,40 @@ export class MessagesService {
     const saved = await this.messageRepo.save(message);
     console.log('[LOG]: Üzenet elmentve:', saved);
     return saved;
+  }
+
+  // updateMessage
+  async updateMessage(id: number, newText: string) {
+    const msg = await this.messageRepo.findOne({ where: { id } });
+    if (!msg) throw new NotFoundException('Üzenet nem található');
+  
+    const oneHourMs = 60 * 60 * 1000;
+    const now = Date.now();
+    const created = new Date(msg.createdAt).getTime();
+  
+    if (now - created > oneHourMs) {
+      throw new BadRequestException('Több mint 1 órája küldték, nem módosítható');
+    }
+  
+    msg.text = newText;
+    msg.isEdited = true;
+    return this.messageRepo.save(msg);
+  }
+  
+  // deleteMessage
+  async deleteMessage(id: number) {
+    const msg = await this.messageRepo.findOne({ where: { id } });
+    if (!msg) throw new NotFoundException('Üzenet nem található');
+  
+    const dayMs = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const created = new Date(msg.createdAt).getTime();
+  
+    if (now - created > dayMs) {
+      throw new BadRequestException('Több mint 24 órája küldték, nem törölhető');
+    }
+  
+    await this.messageRepo.delete(id);
+    return { message: 'Üzenet törölve' };
   }
 }

@@ -18,6 +18,9 @@ export class Message {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column({ default: false })
+  isEdited: boolean;
+
   @ManyToOne(() => Conversation, conversation => conversation.messages, { onDelete: 'CASCADE' })
   conversation: Conversation;
 }

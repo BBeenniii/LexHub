@@ -5,7 +5,7 @@ export class AiChatDto {
   @ApiProperty({
     description: 'A felhasználó által megadott kérdés vagy szituáció',
     minLength: 5,
-    example: 'Mi történik, ha nincs végrendelet?',
+    example: 'Jogtalanul elbocsátottak, milyen ügyvédet keressek fel?',
   })
   @IsString()
   @MinLength(5, { message: 'Az üzenet legalább 5 karakter hosszú kell legyen!.' })

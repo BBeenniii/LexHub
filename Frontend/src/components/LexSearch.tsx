@@ -175,11 +175,19 @@ const LexSearch: React.FC = () => {
       hideFeedbackLater();
       return;
     }
-
+  
     try {
-      const res = await fetch(`http://localhost:3001/messages/conversation/${user.id}/${providerId}`);
+      const res = await fetch('http://localhost:3001/messages/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          seekerId: user.userType === 'seeker' ? user.id : providerId,
+          providerId: user.userType === 'seeker' ? providerId : user.id,
+        }),
+      });
+  
       const data = await res.json();
-
+  
       navigate('/chat', {
         state: {
           selectedConversationId: data.conversationId,
@@ -191,8 +199,11 @@ const LexSearch: React.FC = () => {
       });
     } catch (err) {
       console.error('[ERROR]: Hiba a beszélgetés indításakor:', err);
+      setFeedbackMessage('Hiba történt a beszélgetés indításakor!');
+      setIsError(true);
+      hideFeedbackLater();
     }
-  };
+  };  
 
   return (
     <div className="main-page lexsearch-content">

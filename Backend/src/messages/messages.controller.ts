@@ -20,18 +20,6 @@ export class MessagesController {
     return { conversationId: conversation.id };
   }
 
-  @Get('conversation/:seekerId/:providerId')
-  @ApiOperation({ summary: 'Beszélgetés ID lekérése seeker és provider alapján (létrehozza, ha nincs)' })
-  @ApiParam({ name: 'seekerId', type: Number })
-  @ApiParam({ name: 'providerId', type: Number })
-  async getConversationId(
-    @Param('seekerId', ParseIntPipe) seekerId: number,
-    @Param('providerId', ParseIntPipe) providerId: number,
-  ) {
-    const conversation = await this.messagesService.getOrCreateConversation(seekerId, providerId);
-    return { conversationId: conversation.id };
-  }
-
   @Get('conversations/:userType/:userId')
   @ApiOperation({ summary: 'Felhasználóhoz tartozó összes beszélgetés lekérése' })
   @ApiParam({ name: 'userType', enum: ['seeker', 'provider'] })
@@ -46,19 +34,35 @@ export class MessagesController {
     return this.messagesService.getUserConversations(userType, userId);
   }
 
-  @Get(':conversationId')
-  @ApiOperation({ summary: 'Összes üzenet lekérése egy adott beszélgetésből' })
-  @ApiParam({ name: 'conversationId', type: Number })
-  async getMessagesForConversation(
-    @Param('conversationId', ParseIntPipe) conversationId: number,
-  ) {
-    return this.messagesService.getMessagesForConversation(conversationId);
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Új üzenet létrehozása egy beszélgetésben' })
-  @ApiBody({ type: CreateMessageDto })
-  async createMessage(@Body() dto: CreateMessageDto) {
-    return this.messagesService.createMessage(dto);
+  // Csak az api dokumentáció miatt, a websocket végpontok dokumentációja, mivel a swaggerrel nem kompatibilis
+  @Get('ws-docs')
+  @ApiOperation({ summary: 'WebSocket események dokumentációja' })
+  getWebSocketDocs() {
+    return {
+      info: 'WebSocket események a chathez',
+      events: [
+        {
+          event: 'sendMessage',
+          description: 'Új üzenet küldése',
+          dto: 'CreateMessageDto',
+        },
+        {
+          event: 'getMessages',
+          description: 'Egy beszélgetés összes üzenetének lekérése',
+          dto: 'GetMessagesDto',
+        },
+        {
+          event: 'editMessage',
+          description: 'Üzenet szerkesztése (1 órán belül)',
+          dto: 'EditMessageDto',
+        },
+        {
+          event: 'deleteMessage',
+          description: 'Üzenet törlése (24 órán belül)',
+          dto: 'DeleteMessageDto',
+        }
+      ],
+      note: 'Eseményeket Socket.IO-n keresztül lehet küldeni/fogadni.',
+    };
   }
 }

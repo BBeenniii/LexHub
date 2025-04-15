@@ -6,6 +6,7 @@ import { MessagesService } from './messages.service';
 import { MessagesController } from './messages.controller';
 import { UserSeeker } from 'src/auth/entities/userSeeker.entity';
 import { UserProvider } from 'src/auth/entities/userProvider.entity';
+import { MessagesDtoDocController } from './messages-dto-doc.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { UserProvider } from 'src/auth/entities/userProvider.entity';
       UserProvider,
     ]),
   ],
-  controllers: [MessagesController],
+  controllers: [MessagesController, MessagesDtoDocController],
   providers: [MessagesService],
   exports: [MessagesService],
 })
