@@ -1,51 +1,47 @@
 # LexHub
 
-LexHub egy valós idejű ügyvéd–ügyfél kommunikációt támogató platform, ahol a felhasználók mesterséges intelligencia segítségével kérhetnek tanácsot, vagy közvetlenül kereshetnek jogi szakértőt földrajzi és szakterületi szűrők alapján.
+LexHub egy valós idejű ügyvéd–ügyfél kommunikációt támogató platform, ahol a felhasználók mesterséges intelligencia segítségével kereshetnek jogi képviselőt, 
+illetve földrajzi és szakterületi szűrők alapján.
 
 ---
 
 ## 🛠️ Frontend futtatásához szükséges parancsok
 
-Frontend mappában kell lenni a terminálban a parancsok futtatásához. 
+A projekt pullolása  után a terminálba következő parancsokat kell írni:
 
 ```sh
 cd frontend
-```
-
-A `.env` fájl létrehozása a mappán belül, melynek tartalma:
-
-```sh
-OPENCAGE_API_KEY=
-```
-
-Npm csomagok letöltése és kód futtatása:
-
-```sh
 npm install
 npm run dev
 ```
+És már fut is a backend
 
 ---
 
 ## 🛠️ Backend futtatásához szükséges parancsok
 
-Backend mappában kell lenni a terminálban a parancsok futtatásához. 
-
 ```sh
 cd backend
-```
-
-A `.env` fájl létrehozása a mappán belül, melynek tartalma:
-
-```sh
-OPENAI_API_KEY=
-OPENCAGE_API_KEY=
-```
-
-Npm csomagok letöltése és kód futtatása:
-
-```sh
 npm install
+```
+
+### 🔑 API kulcsok beállítása
+
+A `backend` mappában hozz létre egy `.env` fájlt az alábbi tartalommal:
+
+```env
+OPENAI_API_KEY=YOUR_OPENAI_KEY
+OPENCAGE_API_KEY=YOUR_OPENCAGE_KEY
+```
+
+**API kulcsokat igénylés:**
+
+- 🔗 [OpenAI API Key (chatGPT)](https://platform.openai.com/account/api-keys)
+- 🔗 [OpenCage Geocoder API Key](https://opencagedata.com/api)
+
+Ezután futtasd:
+
+```sh
 npm run start:dev
 ```
 
@@ -53,11 +49,21 @@ npm run start:dev
 
 ## 📚 API dokumentáció
 
-Az API dokumentáció az alábbi linken érhető el:
-
+Az automatikusan generált Swagger API dokumentáció elérhető a backend futtatása után ezen a címen:
 ```
 http://localhost:3001/apidoc#/
 ```
+
+---
+
+## ✨ Fő funkciók
+
+- 🔍 Ügyvédkereső földrajzi és szakterületi szűrőkkel
+- 🤖 AI alapú jogeset határozó (OpenAI integrációval)
+- 💬 Valós idejű ügyvéd–ügyfél chat Socket.IO-val
+- 🔐 Regisztráció és bejelentkezés kétféle szerepkörrel (seeker, provider)
+- 👤 Profilkezelés és ügyvédi szakterületek adminisztrációja
+- 📄 Swagger alapú automatikus API dokumentáció
 
 ---
 
@@ -74,14 +80,19 @@ http://localhost:3001/apidoc#/
 
 ---
 
-## ✨ Fő funkciók
+## 🔗 Főbb backend csomagok és könyvtárak
 
-- 🔍 Ügyvédkereső földrajzi és szakterületi szűrőkkel
-- 🤖 AI alapú jogi tanácsadás (OpenAI integrációval)
-- 💬 Valós idejű ügyvéd–ügyfél chat Socket.IO-val
-- 🔐 Regisztráció és bejelentkezés kétféle szerepkörrel (seeker, provider)
-- 👤 Profilkezelés és ügyvédi szakterületek adminisztrációja
-- 📄 Swagger alapú automatikus API dokumentáció
+| Csomag neve        | Funkció |
+|--------------------|---------|
+| NestJS             | Backend keretrendszer |
+| TypeORM            | ORM – adatbázis-kezelés |
+| MySQL2             | MySQL adatbázis driver |
+| bcrypt             | Jelszóhashelés |
+| axios              | Külső API-hívások (OpenCage) |
+| openai             | AI-integráció OpenAI-val |
+| socket.io          | Valós idejű chat WebSockettel |
+| class-validator    | DTO-validáció |
+| @nestjs/swagger    | Swagger API dokumentáció generálás |
 
 ---
 
@@ -89,9 +100,23 @@ http://localhost:3001/apidoc#/
 
 ```
 LexHub/
-├── Backend/         # NestJS backend API
-├── Frontend/        # React frontend (Vite + TailwindCSS)
-├── README.md        # Dokumentáció
+├── backend/              # NestJS + TypeORM backend 
+│   ├── src/
+│   │   ├── aichat        # Jogeset azonosítás OpenAI apival
+│   │   ├── auth/         # Authentikáció (seeker + provider)
+│   │   ├── chat/         # Chat gateway - sccket.io műveletek
+│   │   ├── lawyer-search/      # Ügyvédkereső + szűrés
+│   │   ├── location-validator/ # OpenCage város-megye validáció
+│   │   └── messages/     # Chat és beszélgetések kezelése
+│   └── .env              # API kulcsok (OpenAi + Opencage)
+├── frontend/             # React + TailwindCSS frontend
+│   ├── src/
+│   │   ├── components/   # Felhasználói felület elemei
+│   │   ├── context/      # Socket kontextus
+│   │   ├── style/        # CSS styleok
+│   │   ├── types/        # Interfaces
+│   │   └── utils/        # autentikáció kezelés
+├── README.md             # Dokumentáció
 ```
 
 ---
