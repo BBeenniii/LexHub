@@ -40,6 +40,8 @@ async function bootstrap() {
         statusCode: 400,
       });
     },
+
+    // dto-vá alakítás
     transform: true, 
     transformOptions: {
       enableImplicitConversion: true,
@@ -47,6 +49,7 @@ async function bootstrap() {
     }),
   );
 
+  // swagger-ös apidoc
   const docConfig = new DocumentBuilder()
     .setTitle('LexHub')
     .setDescription('LexHub valós idejű ügyfél–ügyvéd rendszer API')

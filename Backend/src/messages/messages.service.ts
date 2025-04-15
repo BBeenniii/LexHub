@@ -23,12 +23,19 @@ export class MessagesService {
     private readonly providerRepo: Repository<UserProvider> 
   ) {}
   
-  // getOrCreateConversations
+  // conversation lekérés vagy létrehozás ha nem létezik (nincs conversation ilyen seekerId-providerId kombinációval)
   async getOrCreateConversation(seekerId: number, providerId: number): Promise<Conversation> {
+    // felhasználó validálás
+    const existingSeeker = await this.seekerRepo.findOneBy({ id: seekerId });
+    if (!existingSeeker) throw new NotFoundException('Felhasználó (seeker) nem található.');
+    const existingProvider = await this.providerRepo.findOneBy({ id: providerId });
+    if (!existingProvider) throw new NotFoundException('Felhasználó (provider) nem található.');
+
     let conversation = await this.conversationRepo.findOne({
       where: { seekerId, providerId },
     });
 
+    // ha nem létezik, létrehozás
     if (!conversation) {
       conversation = this.conversationRepo.create({ seekerId, providerId });
       await this.conversationRepo.save(conversation);
@@ -37,8 +44,18 @@ export class MessagesService {
     return conversation;
   }
 
-  // getUserConversations
+  // felhasználó összes conversation-jének lekérése
   async getUserConversations(userType: 'seeker' | 'provider', userId: number) {
+    // felhasználó validáció
+    if (userType === 'seeker') {
+      const exists = await this.seekerRepo.findOneBy({ id: userId });
+      if (!exists) throw new NotFoundException('Felhasználó (seeker) nem található.');
+    } else if (userType === 'provider') {
+      const exists = await this.providerRepo.findOneBy({ id: userId });
+      if (!exists) throw new NotFoundException('Felhasználó (provider) nem található.');
+    }
+
+    // conversation-ök keresése
     const conversations = await this.conversationRepo.find({
       where: [{ seekerId: userId }, { providerId: userId }],
       relations: ['messages'],
@@ -50,6 +67,7 @@ export class MessagesService {
         const otherUserId =
           userType === 'seeker' ? conv.providerId : conv.seekerId;
   
+        // legutolsó üzenet betöltése
         const latest = await this.messageRepo.findOne({
           where: { conversation: { id: conv.id } },
           order: { createdAt: 'DESC' },
@@ -89,6 +107,7 @@ export class MessagesService {
       })
     );
   
+    // aszerint rendezzük, hogy melyikkel volt az utolsó interakció
     const sorted = result.sort((a, b) => {
       const aTime = new Date(a.updatedAt).getTime();
       const bTime = new Date(b.updatedAt).getTime();
@@ -98,28 +117,30 @@ export class MessagesService {
     return sorted;
   }  
 
-  // getMessagesForConversation
+  // üzenetek betöltése a conversationhöz
   async getMessagesForConversation(conversationId: number) {
+    // conversation validáció
     const exists = await this.conversationRepo.findOne({ where: { id: conversationId } });
     if (!exists) {
       throw new NotFoundException('A beszélgetés nem található');
     }
 
+    // üzenetek betöltse/visszaadása
     return this.messageRepo.find({
       where: { conversation: { id: conversationId } },
       order: { createdAt: 'ASC' },
     });
   }
 
-  // createMessage
+  // új üzenet készítés
   async createMessage(data: CreateMessageDto) {
-    console.log('[LOG]: createMessage hívva:', data);
-
+    // conversation validáció
     const conversation = await this.conversationRepo.findOne({ where: { id: data.conversationId } });
     if (!conversation) {
       throw new NotFoundException('A beszélgetés nem található');
     }
 
+    // új message létrehozása
     const message = this.messageRepo.create({
       senderId: data.senderId,
       receiverId: data.receiverId,
@@ -127,13 +148,14 @@ export class MessagesService {
       conversation: { id: data.conversationId },
     });
 
+    // üzenet mentése az adatbázisba
     const saved = await this.messageRepo.save(message);
-    console.log('[LOG]: Üzenet elmentve:', saved);
     return saved;
   }
 
-  // updateMessage
+  // üzenet szerkesztése - csak az elküldéstől számított 1 órán belül
   async updateMessage(id: number, newText: string) {
+    // módosítandó üzenet létezésének validálása
     const msg = await this.messageRepo.findOne({ where: { id } });
     if (!msg) throw new NotFoundException('Üzenet nem található');
   
@@ -145,13 +167,15 @@ export class MessagesService {
       throw new BadRequestException('Több mint 1 órája küldték, nem módosítható');
     }
   
+    // szerkesztés mentése
     msg.text = newText;
     msg.isEdited = true;
     return this.messageRepo.save(msg);
   }
   
-  // deleteMessage
+  // üzenet törlése - csak az elküldéstől számított 24 órán belül
   async deleteMessage(id: number) {
+    // kitörlendő üzenet létezésének validálása
     const msg = await this.messageRepo.findOne({ where: { id } });
     if (!msg) throw new NotFoundException('Üzenet nem található');
   
@@ -163,6 +187,7 @@ export class MessagesService {
       throw new BadRequestException('Több mint 24 órája küldték, nem törölhető');
     }
   
+    // törlés megvalósítása
     await this.messageRepo.delete(id);
     return { message: 'Üzenet törölve' };
   }

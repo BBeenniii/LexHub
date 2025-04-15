@@ -41,31 +41,31 @@ export class AuthService {
   }  
 
   // CheckEmailConflict
-  private async checkEmailConflict(email: string/*, currentId: number*/) {
+  private async checkEmailConflict(email: string) {
     const seeker = await this.seekerRepo.findOne({ where: { email } });
-    if (seeker /*&& seeker.id !== currentId*/) {
+    if (seeker) {
       throw new BadRequestException('Ez az email cím már használatban van!');
     }
   
     const provider = await this.providerRepo.findOne({ where: { email } });
-    if (provider /*&& provider.id !== currentId*/) {
+    if (provider) {
       throw new BadRequestException('Ez az email cím már használatban van!');
     }
   }
   
-
   // RegisterSeeker
   async registerSeeker(dto: RegisterSeekerDto) {
     await this.checkEmailConflict(dto.email);
 
-     // NEW: city & county validáció
+    // city & county validáció
     if (dto.city || dto.county) {
-      console.log("Validating city and county:", dto.city, dto.county);
       await this.locationValidator.validateCityAndCounty(
         dto.city ?? '',
         dto.county ?? ''
       );
     }
+
+    // jelszó hashaelés és mentés
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const seeker = this.seekerRepo.create({ ...dto, password: hashedPassword });
     await this.seekerRepo.save(seeker);
@@ -76,21 +76,24 @@ export class AuthService {
   async registerProvider(dto: RegisterProviderDto) {
     await this.checkEmailConflict(dto.email);
 
+    // kasz és specs (szakterület(ek) id(jai)) validáció
     const existingKASZ = await this.providerRepo.findOne({ where: { kasz: dto.kasz } });
     if (existingKASZ) throw new BadRequestException('Ez a KASZ szám már használatban van!');
 
     const validSpecs = await this.lawyerTypeRepo.findByIds(dto.specs);
     if (validSpecs.length !== dto.specs.length) throw new BadRequestException('Nem létező szakterület!');
 
+    // Regisztrációkor megadott város alapján koordináták mentése a "nerby" kereséshez
     const { lat, lng } = await this.getCoordinatesFromCity(dto.city);
-    // NEW: city & county validáció
+    // city & county validáció
     if (dto.city || dto.county) {
-      console.log("Validating city and county:", dto.city, dto.county);
       await this.locationValidator.validateCityAndCounty(
         dto.city ?? '',
         dto.county ?? ''
       );
     }
+
+    //jelszó hashelés és adatok mentése 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const provider = new UserProvider();
     Object.assign(provider, {
@@ -105,7 +108,9 @@ export class AuthService {
   }
 
   // login
-  async login({ email, password }: LoginDto) { // Automatikusan meghatározza a usertypeot már
+  async login({ email, password }: LoginDto) {
+    // Mivel nem lehet ugyanazzal az emailel mindkét userTypeot regisztrálni 
+    // ezért egyszerűn meghatározható a felhasználó típusa
     const seeker = await this.seekerRepo.findOne({ where: { email } });
     if (seeker && await bcrypt.compare(password, seeker.password)) {
       return { message: 'Sikeres bejelentkezés', user: seeker, userType: 'seeker' };
@@ -142,21 +147,24 @@ export class AuthService {
 
   // updateSeekerProfile
   async updateSeekerProfile(id: number, updateData: UpdateSeekerDto) {
+    // Ellenőrzés biztos létezik-e a profil
+    const seeker = await this.seekerRepo.findOne({ where: { id } });
+    if (!seeker) {
+      throw new NotFoundException('A felhasználó (Seeker) nem található.');
+    }
+
+    // email validáció
     await this.checkEmailConflict(updateData.email ?? '');
 
+    // City & County validáció
     if (updateData.city || updateData.county) {
-      console.log("Validating city and county:", updateData.city, updateData.county);
       await this.locationValidator.validateCityAndCounty(
         updateData.city ?? '',
         updateData.county ?? ''
       );
     }
 
-    const seeker = await this.seekerRepo.findOne({ where: { id } });
-    if (!seeker) {
-      throw new NotFoundException('A felhasználó (Seeker) nem található.');
-    }
-
+    // Jelszó változtatás új jelszó + régi megadása
     if (updateData.newPassword) {
       if (!updateData.currentPassword) {
         throw new BadRequestException('A jelenlegi jelszót is meg kell adni a módosításhoz.');
@@ -170,29 +178,32 @@ export class AuthService {
       seeker.password = await bcrypt.hash(updateData.newPassword, 10);
     }
 
+    // módosított adatok mentése
     Object.assign(seeker, updateData);
     await this.seekerRepo.save(seeker);
-    console.log("[LOG]: SEEKER profile updated");
     return { message: 'A profil frissítve.' };
   }
 
   // updateProviderProfile
   async updateProviderProfile(id: number, updateData: UpdateProviderDto) {
+    // Ellenőrzés biztos létezik-e a profil
+    const provider = await this.providerRepo.findOne({ where: { id } });
+    if (!provider) {
+      throw new NotFoundException('A felhasználó (Provider) nem található.');
+    }
+
+    // email validálás
     await this.checkEmailConflict(updateData.email ?? '');
 
+    // city & county validálás
     if (updateData.city || updateData.county) {
-      console.log("Validating city and county:", updateData.city, updateData.county);
       await this.locationValidator.validateCityAndCounty(
         updateData.city ?? '',
         updateData.county ?? ''
       );
     }
 
-    const provider = await this.providerRepo.findOne({ where: { id } });
-    if (!provider) {
-      throw new NotFoundException('A felhasználó (Provider) nem található.');
-    }
-
+    // Jelszó változtatás új jelszó + régi megadása
     if (updateData.newPassword) {
       if (!updateData.currentPassword) {
         throw new BadRequestException('A jelenlegi jelszót is meg kell adni a módosításhoz.');
@@ -206,22 +217,23 @@ export class AuthService {
       provider.password = await bcrypt.hash(updateData.newPassword, 10);
     }
 
+    // város (city) válrotatás esetén latitude & longitude értékek frissítése
     if (updateData.city && updateData.city !== provider.city) {
       const { lat, lng } = await this.getCoordinatesFromCity(updateData.city);
       provider.lat = lat;
       provider.lng = lng;
     }
 
+    // szakterület id(k) validálása
     const validSpecs = await this.lawyerTypeRepo.findByIds(updateData.specs);
     if (validSpecs.length !== updateData.specs.length) throw new BadRequestException('Nem létező szakterület azonosító.');
 
-
+    // módosított adatok mentése
     Object.assign(provider, {
       ...updateData,
       specs: JSON.stringify(updateData.specs),
     })
     await this.providerRepo.save(provider);
-    console.log("[LOG]: PROVIDER profile updated");
     return { message: 'A profil frissítve.' };
   }
 

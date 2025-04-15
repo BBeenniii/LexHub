@@ -2,18 +2,23 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import axios from "axios";
 
 @Injectable()
+// Nincs visszatérési értéke | 
+// az egyetlen feladat amit ellát hogy errort dobjon ha nem létező city vagy county kerül beküldésre
 export class LocationValidatorService {
   private readonly API_KEY = process.env.OPENCAGE_API_KEY;
   private normalizeMatch(a: string, b: string): boolean {
     return a.trim().toLowerCase() === b.trim().toLowerCase();
   }
 
+  // city & county validáció ha mind kettő van
   async validateCityAndCounty(city?: string, county?: string): Promise<void> {
     if (city) await this.validateCity(city);
     if (county) await this.validateCounty(county);
   }  
 
+  // csak city validáció
   async validateCity(city: string): Promise<void> {
+    // keresés OpenCage adatok alapján
     const res = await axios.get('https://api.opencagedata.com/geocode/v1/json', {
       params: {
         key: this.API_KEY,
@@ -42,7 +47,9 @@ export class LocationValidatorService {
     }
   }
   
+  // csak county validáció
   async validateCounty(county: string): Promise<void> {
+    // keresés OpenCage adatok alapján
     const res = await axios.get('https://api.opencagedata.com/geocode/v1/json', {
       params: {
         key: this.API_KEY,

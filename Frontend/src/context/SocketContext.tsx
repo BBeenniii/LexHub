@@ -20,7 +20,8 @@ const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
       });
 
       newSocket.on('connect', () => {
-        console.log('✅ Socket connected:', newSocket.id);
+        /* Opcionális ha szükséges a visszajelzés a sikeres kapcsolat kialakításáról
+        console.log('Socket connected:', newSocket.id);*/
       });
 
       setSocket(newSocket);

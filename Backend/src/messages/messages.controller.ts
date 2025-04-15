@@ -12,6 +12,7 @@ import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiExtraModels, } from '@nest
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
+  // létrehozza a conversation-t
   @Post('start')
   @ApiOperation({ summary: 'Beszélgetés indítása seeker és provider között (ha nem létezik)' })
   @ApiBody({ type: StartConversationDto })
@@ -20,6 +21,7 @@ export class MessagesController {
     return { conversationId: conversation.id };
   }
 
+  // lekéri az adott felhasználó összes kapcsolatát/conversation-jét
   @Get('conversations/:userType/:userId')
   @ApiOperation({ summary: 'Felhasználóhoz tartozó összes beszélgetés lekérése' })
   @ApiParam({ name: 'userType', enum: ['seeker', 'provider'] })
@@ -39,7 +41,7 @@ export class MessagesController {
   @ApiOperation({ summary: 'WebSocket események dokumentációja' })
   getWebSocketDocs() {
     return {
-      info: 'WebSocket események a chathez',
+      info: 'WebSocket események a chathez. "@SubscribeMessage végpontok"',
       events: [
         {
           event: 'sendMessage',
@@ -53,12 +55,12 @@ export class MessagesController {
         },
         {
           event: 'editMessage',
-          description: 'Üzenet szerkesztése (1 órán belül)',
+          description: 'Üzenet szerkesztése (az elküldésétől számított 1 órán belül)',
           dto: 'EditMessageDto',
         },
         {
           event: 'deleteMessage',
-          description: 'Üzenet törlése (24 órán belül)',
+          description: 'Üzenet törlése (az elküldésétől számított 24 órán belül)',
           dto: 'DeleteMessageDto',
         }
       ],

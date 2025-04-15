@@ -13,6 +13,7 @@ export class AiChatService {
   }
 
   async getLegalAdvice(userMessage: string): Promise<string> {
+      // statikus lista a szakterület beazonosításhoz
     const lawyer_types = [
       "Büntetőjogász", "Védőügyvéd", "Polgári jogász", "Ingatlanjogász", "Munkajogász",
       "Családjogi ügyvéd", "Válóperes ügyvéd", "Kártérítési ügyvéd", "Közigazgatási jogász", "Alkotmányjogász",
@@ -28,6 +29,7 @@ export class AiChatService {
 
     const response = await this.openai.chat.completions.create({
       model: "gpt-3.5-turbo",
+      // OpenAI propmt
       messages: [
         {
           role: "system",
@@ -43,11 +45,8 @@ export class AiChatService {
       ],
       max_tokens: 10,
     });
-    /* 
-    console.log(response)
-    console.log("AI response:", response.choices[0].message.content);
-    */
 
+    // Választott szakterület | sikeretelen esetén Nincs válasz
     return response.choices[0].message.content || "Nincs válasz.";
   }
 }

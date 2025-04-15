@@ -18,6 +18,7 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Seeker regisztráció
   @Post('register/seeker')
   @ApiOperation({ summary: 'Seeker regisztráció' })
   @ApiBody({ type: RegisterSeekerDto })
@@ -25,6 +26,7 @@ export class AuthController {
     return this.authService.registerSeeker(body);
   }
 
+  // Provider regisztráció
   @Post('register/provider')
   @ApiOperation({ summary: 'Provider regisztráció' })
   @ApiBody({ type: RegisterProviderDto })
@@ -32,6 +34,7 @@ export class AuthController {
     return this.authService.registerProvider(body);
   }
 
+  // login | mind két felhasználó esetén
   @Post('login')
   @ApiOperation({ summary: 'Bejelentkezés seeker vagy provider típussal' })
   @ApiBody({ type: LoginDto })
@@ -39,12 +42,14 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+  // szakterületek lekérése
   @Get('lawyertypes')
   @ApiOperation({ summary: 'Ügyvéd típusok lekérdezése' })
   async getLawyerTypes() {
     return this.authService.getLawyerTypes();
   }
 
+  // seeker profil lekérése id alapján
   @Get('profile/seeker/:id')
   @ApiOperation({ summary: 'Seeker profil lekérdezése' })
   @ApiParam({ name: 'id', type: Number })
@@ -52,6 +57,7 @@ export class AuthController {
     return this.authService.getSeekerProfile(id);
   }
   
+  // provider profil lekérése id alapján
   @Get('profile/provider/:id')
   @ApiOperation({ summary: 'Provider profil lekérdezése' })
   @ApiParam({ name: 'id', type: Number })
@@ -59,6 +65,7 @@ export class AuthController {
     return this.authService.getProviderProfile(id);
   }
 
+  // seeker profil módosítás id alapján
   @Put('profile/seeker/:id')
   @ApiOperation({ summary: 'Seeker profil frissítése' })
   @ApiParam({ name: 'id', type: Number })
@@ -70,6 +77,7 @@ export class AuthController {
     return this.authService.updateSeekerProfile(id, dto);
   }
 
+  // provider profil módosítás id alapján
   @Put('profile/provider/:id')
   @ApiOperation({ summary: 'Provider profil frissítése' })
   @ApiParam({ name: 'id', type: Number })

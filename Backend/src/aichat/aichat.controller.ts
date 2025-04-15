@@ -9,6 +9,7 @@ export class AiChatController {
   constructor(private readonly aiChatService: AiChatService) {}
 
   @Post()
+  // Apidochoz
   @ApiOperation({ 
     summary: 'Jogeset beazonosítása AI segítségével', 
     description: 'Egy kérdést/leírást küld, az AI (OpenAI API-n keresztül) pedig meghatározza milyen ügyvédet kell keresnie' })
@@ -22,6 +23,7 @@ export class AiChatController {
       },
     },
   })
+  //
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async getLegalAdvice(@Body() body: AiChatDto) {
     const result = await this.aiChatService.getLegalAdvice(body.prompt);

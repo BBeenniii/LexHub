@@ -18,15 +18,15 @@ export class ChatGateway implements OnGatewayConnection {
 
   constructor(private readonly messagesService: MessagesService) {}
 
+  // connection kezelés
   handleConnection(client: Socket) {
     const userId = client.handshake.query.userId;
     if (userId) {
       client.join(`user-${userId}`);
-      console.log(`[LOG]: Socket joined room: user-${userId}`);
     }
   }
 
-  // send message
+  // send message 
   @SubscribeMessage('sendMessage')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async handleSendMessage(
@@ -35,6 +35,7 @@ export class ChatGateway implements OnGatewayConnection {
   ) {
     const saved = await this.messagesService.createMessage(data);
   
+    // real time üzenet küldés / fogadás
     this.server.to(`user-${data.receiverId}`).emit('chatUpdated', data.conversationId);
     this.server.to(`user-${data.senderId}`).emit('chatUpdated', data.conversationId);
   }  
@@ -46,6 +47,7 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() data: GetMessagesDto,
     @ConnectedSocket() client: Socket,
   ) {
+    // real time frissítés
     const msgs = await this.messagesService.getMessagesForConversation(data.conversationId);
     client.emit('loadedMessages', msgs);
   }  
@@ -57,10 +59,9 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() data: EditMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[LOG]: Szerkesztés WS-ről érkezett:', data);
-  
     const updated = await this.messagesService.updateMessage(data.messageId, data.newText);
-  
+    
+    // real time frissítés (szerkesztett üzenet megjelenítése)
     this.server.to(`user-${data.receiverId}`).emit('messageEdited', updated);
     this.server.to(`user-${data.senderId}`).emit('messageEdited', updated);
   }  
@@ -72,6 +73,7 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() data: DeleteMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
+    // real time törlés
     await this.messagesService.deleteMessage(data.messageId);
     this.server.to(`user-${data.conversationId}`).emit('chatUpdated', data.conversationId);
   }

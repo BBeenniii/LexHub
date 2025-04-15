@@ -5,7 +5,8 @@ import { EditMessageDto } from './dto/edit-message.dto';
 import { DeleteMessageDto } from './dto/delete-message.dto';
 import { GetMessagesDto } from './dto/get-messages.dto';
 
-@ApiTags('WebSocket Dokumentáció')
+// csak dokumentációs célja van - mivel a websocketes pontokat nem lehet swagger-el dokumentálni
+@ApiTags('WebSocket Dokumentáció - Nem funkcionális végpontok')
 @Controller('docs/ws-dto')
 export class MessagesDtoDocController {
   @Post('create')

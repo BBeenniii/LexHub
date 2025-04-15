@@ -15,32 +15,36 @@ export class LawyerSearchService {
     private readonly lawyerTypeRepo: Repository<LawyerType>,
     private readonly locationValidator: LocationValidatorService
   ) {}
+
+    // keresési folyamat
     async searchLawyers(dto: LawyerSearchDto) {
-      // Bár maga az alkalmazás nem használja, de tesztek után kiegészített védelem bad requestekre
+      // szakterület id validáció 
       const type = await this.lawyerTypeRepo.findOne({ where: { id: dto.specialtyId } });
       if (!type) {
         throw new BadRequestException(`A megadott szakterület nem létezik (ID: ${dto.specialtyId})`);
       }
 
+      // hely alapú szűrések validációja - egyszerre ne lehessen csak 1et használni
       if ((dto.city && dto.county) || (dto.city && dto.lat && dto.lng) || (dto.county && dto.lat && dto.lng)) {
         throw new BadRequestException("Egyszerre csak egy helyi szűrő (city, county vagy lat/lng) adható meg!");
       }
       
+      // hely alapú szűrések validációja - a kereséshez kötelező egy szűrőt használni
       if (!dto.city && !dto.county && !(dto.lat && dto.lng)) {
-        throw new BadRequestException("Legalább egy helyi szűrőt (city, county vagy lat/lng) meg kell adni!");
+        throw new BadRequestException("Legalább egy hely alapű szűrőt meg kell adni!");
       }
       
       const qb = this.providerRepo.createQueryBuilder('provider');
-      console.log("🎯 DTO érkezett:", dto);
       
+      // szakterüt szűrés
       if (dto.specialtyId) {
         qb.andWhere('provider.specs LIKE :specMatch', {
           specMatch: `[%${dto.specialtyId}%]`,
         });
       }
     
+      // hely alapú szűrés - közelben | megye | város
       if (dto.lat && dto.lng) {
-        console.log("📍 Lokációs (lat/lng) keresés");
         qb.addSelect(`
             ST_Distance_Sphere(
               POINT(provider.lng, provider.lat),
@@ -56,10 +60,8 @@ export class LawyerSearchService {
         await this.locationValidator.validateCity(dto.city);
         qb.andWhere('provider.city = :city', { city: dto.city });
       }
-    
-      console.log("Generált SQL:", qb.getSql());
+      
+      // eredmények küldése
       return qb.getMany();
     }    
-
-
 }
