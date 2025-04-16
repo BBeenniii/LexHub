@@ -55,6 +55,12 @@ npm run start:dev
 
 ---
 
+## ❗ Jelszavak
+
+Minden, az adatbázisban lévő fiók jelszava: Teszt1234!
+
+---
+
 ## 📘 Dokumentáció
 
 - [🧑‍💻 Fejlesztői dokumentáció (GitHub Wiki)](https://github.com/BBeenniii/LexHub/wiki/Fejlesztői-dokumentáció)
