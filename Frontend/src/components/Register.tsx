@@ -26,16 +26,19 @@ const Register: React.FC = () => {
 
   const navigate = useNavigate();
 
+  //A szakterületek lekérdezése a backendről
   useEffect(() => {
     axios.get('http://localhost:3001/auth/lawyertypes').then(response => {
       setLawyerTypes(response.data);
     });
   }, []);
 
+  //A bemenő adatok beállítása a regisztrációs űrlapra
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  //A szakterületek kezelése
   const handleSpecialtiesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = Number(e.target.value);
     setFormData(prev => ({
@@ -46,6 +49,7 @@ const Register: React.FC = () => {
     }));
   };
 
+  //A bemenő adatok validálása
   const validateInput = () => {
     const nameParts = formData.name.trim().split(' ');
     if (nameParts.length < 2 || nameParts.some(part => part.length < 2)) {
@@ -99,6 +103,7 @@ const Register: React.FC = () => {
       password: formData.password,
     };
 
+    //Provider specifikus adatok
     if (userType === 'provider') {
       postData.kasz = formData.kasz;
       postData.providerType = providerType;
@@ -108,6 +113,7 @@ const Register: React.FC = () => {
       postData.specs = specialtiesEnabled ? formData.specs : formData.specs.slice(0, 1);
     }
 
+    //A regisztrációs adatok elküldése a backendnek
     try {
       await axios.post(`http://localhost:3001/auth/${endpoint}`, postData);
       setFeedbackMessage('Sikeres regisztráció!');

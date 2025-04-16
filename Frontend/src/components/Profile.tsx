@@ -1,24 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUser } from '../utils/auth-utils';
+import { UserData, LawyerType } from '../types/Profile';
 import '../style/Profile.css';
-
-interface UserData {
-  id: number;
-  name: string;
-  email: string;
-  phone?: string;
-  country?: string;
-  county?: string;
-  city?: string;
-  userType: 'seeker' | 'provider';
-  specs?: number[];
-  specNames?: string[];
-}
-
-interface LawyerType {
-  id: number;
-  type: string;
-}
 
 const Profile: React.FC = () => {
   const storedUser = getUser();
@@ -31,6 +14,7 @@ const Profile: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
 
+  //Profil lekérdezése
   useEffect(() => {
     if (!storedUser) return;
 
@@ -55,6 +39,7 @@ const Profile: React.FC = () => {
       }
     };
 
+    //Szakterületek lekérdezése
     const fetchLawyerTypes = async () => {
       try {
         const res = await fetch('http://localhost:3001/auth/lawyertypes');
@@ -69,11 +54,13 @@ const Profile: React.FC = () => {
     fetchLawyerTypes();
   }, [storedUser, editMode]);
 
+  //Input mezők kezelése
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  //Szakterületek kezelése
   const toggleSpec = (specId: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -89,7 +76,7 @@ const Profile: React.FC = () => {
   if (!user) return;
 
   const updatedFields: any = {};
-
+  //Csak a módosított mezőket frissítjük
   if (formData.name !== user.name) updatedFields.name = formData.name;
   if (formData.email !== user.email) updatedFields.email = formData.email;
   if (formData.phone !== user.phone) updatedFields.phone = formData.phone;
@@ -104,7 +91,7 @@ const Profile: React.FC = () => {
     updatedFields.specs = formData.specs;
   }
 
-  // Jelszó változtatás logika
+  // Jelszó módosítás
   if (newPassword) {
     if (!currentPassword) {
       setMessage('A jelszó módosításhoz add meg a jelenlegi jelszavad!');
@@ -114,7 +101,7 @@ const Profile: React.FC = () => {
     updatedFields.currentPassword = currentPassword;
     updatedFields.newPassword = newPassword;
   }
-
+  //Ha nincs módosított adat, akkor nem küldjük el a kérést
   if (Object.keys(updatedFields).length === 0) {
     setMessage('Nincs módosított adat.');
     setIsSuccess(false);
@@ -125,6 +112,7 @@ const Profile: React.FC = () => {
     return;
   }
 
+  //Ha van módosított adat, akkor elküldjük a kérést
   try {
     const res = await fetch(`http://localhost:3001/auth/profile/${user.userType}/${user.id}`, {
       method: 'PUT',
@@ -132,6 +120,7 @@ const Profile: React.FC = () => {
       body: JSON.stringify(updatedFields),
     });
 
+    //Hibakezelés
     if (!res.ok) {
       const error = await res.json();
       setMessage('Mentési hiba: ' + (error.message || 'Ismeretlen hiba.'));
@@ -164,6 +153,7 @@ const Profile: React.FC = () => {
     }
   };
 
+  //Profil szerkesztésének leállítása
   const handleCancel = () => {
     if (user) {
       setFormData({

@@ -225,8 +225,20 @@ export class AuthService {
     }
 
     // szakterület id(k) validálása
-    const validSpecs = await this.lawyerTypeRepo.findByIds(updateData.specs);
-    if (validSpecs.length !== updateData.specs.length) throw new BadRequestException('Nem létező szakterület azonosító.');
+    if (updateData.specs !== undefined) {
+      if (!Array.isArray(updateData.specs)) {
+        throw new BadRequestException('A szakterületek listája kötelező és tömb típusú kell legyen.');
+      }
+
+      const validSpecs = await this.lawyerTypeRepo.findBy({ id: In(updateData.specs) });
+
+      if (validSpecs.length !== updateData.specs.length) {
+        throw new BadRequestException('Nem létező szakterület azonosító.');
+      }
+
+      provider.specs = JSON.stringify(updateData.specs);
+    }
+
 
     // módosított adatok mentése
     Object.assign(provider, {

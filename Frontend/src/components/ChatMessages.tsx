@@ -1,23 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../context/SocketContext';
+import { Message, Props } from '../types/ChatMessages';
 import '../style/Chat.css';
 import { Pencil, Trash2, Save } from 'lucide-react';
-
-interface Message {
-  id?: number;
-  text: string;
-  senderId: number;
-  receiverId: number;
-  conversationId: number;
-  createdAt?: string;
-  isEdited: boolean;
-}
-
-interface Props {
-  conversationId: number;
-  currentUserId: number;
-  otherUser: { id: number; name: string };
-}
 
 const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUser }) => {
   const socket = useSocket();
@@ -44,6 +29,7 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
       : date.toLocaleDateString('hu-HU'); // 2024. 04. 15.
   };
 
+  // Az üzenetek betöltése
   useEffect(() => {
     if (!socket) return;
 
@@ -59,6 +45,7 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
     };
   }, [socket, conversationId]);
 
+  // Az üzenetek frissítése
   useEffect(() => {
     if (!socket) return;
 
@@ -74,10 +61,12 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
     };
   }, [socket, conversationId]);
 
+  // Az üzenetek automatikus görgetése a legújabb üzenethez
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Az frissített üzenetek kezelése
   useEffect(() => {
     if (!socket) return;
     socket.on('messageEdited', (updatedMsg: Message) => {
@@ -90,7 +79,8 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
       socket.off('messageEdited');
     };
   }, []);
-  
+
+  // Az új üzenetek kezelése
   const sendMessage = () => {
     if (!input.trim() || !socket) return;
 
@@ -112,6 +102,7 @@ const ChatMessages: React.FC<Props> = ({ conversationId, currentUserId, otherUse
     setEditInput(msg.text);
   };
   
+  // A szerkesztett üzenet mentése
   const saveEditedMessage = () => {
     if (socket && editingMessageId !== null) {
       socket.emit('editMessage', {

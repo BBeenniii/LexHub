@@ -10,13 +10,14 @@ const Login: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
+  //Bejelentkezés küldése a szervernek, ha sikeres felhasználói adatok mentése a localStorage-ba
   const handleLogin = async () => {
     try {
       const res = await axios.post('http://localhost:3001/auth/login', {
         email,
         password,
       });
-
+      
       setFeedbackMessage('Sikeres bejelentkezés!');
       setIsSuccess(true);
       localStorage.setItem('user', JSON.stringify(res.data.user));

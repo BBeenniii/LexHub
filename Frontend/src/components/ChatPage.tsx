@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Conversation } from '../types/ChatPage';
 import ChatSidebar from './ChatSidebar';
 import ChatMessages from './ChatMessages';
 import { getUser } from '../utils/auth-utils';
@@ -6,15 +7,6 @@ import { useLocation } from 'react-router-dom';
 import { User } from '../types/User';
 import { useSocket } from '../context/SocketContext';
 import "../style/Chat.css";
-
-interface Conversation {
-  id: number;
-  participant: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
 
 const ChatsPage: React.FC = () => {
   const location = useLocation();
@@ -25,7 +17,7 @@ const ChatsPage: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
 
-  // fetchConversation 
+  //A beszélgetések lekérése a szerverről
   const fetchConversations = async (user: User, convId?: number) => {
     try {
       const res = await fetch(`http://localhost:3001/messages/conversations/${user.userType}/${user.id}`);
@@ -33,7 +25,7 @@ const ChatsPage: React.FC = () => {
 
       if (Array.isArray(data)) {
         setConversations(data);
-
+        //A kiválasztott beszélgetés betöltése 
         const match = convId ? data.find((c) => c.id === convId) : null;
         setSelectedConv(match || data[0] || null);
       } else {
@@ -43,7 +35,7 @@ const ChatsPage: React.FC = () => {
       console.error("Hiba a beszélgetések lekérésekor:", err);
     }
   };
-
+  //A felhasználó állapotának beállítása
   useEffect(() => {
     const storedUser = getUser();
     if (storedUser) {
@@ -51,6 +43,7 @@ const ChatsPage: React.FC = () => {
     }
   }, []);
 
+  //A felhasználó beszélgetéseinek lekérése
   useEffect(() => {
     if (user) {
       fetchConversations(user, forcedConvId);

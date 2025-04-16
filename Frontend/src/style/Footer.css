@@ -1,3 +1,4 @@
+/*Footer stílusa*/
 .footer {
   background: linear-gradient(100deg, #0E0B19, #58656E);
   color: rgba(255, 255, 255, 0.8);
@@ -8,25 +9,25 @@
   width: 100%;
 
 }
-
+/*Footer tartalom*/
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
-
+/*Footer szöveg*/
 .footer p {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 300;
 }
-
+/*Footer linkek*/
 .footer a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: color 0.3s ease;
 }
-
+/*Footer linkek hover állapotban*/
 .footer a:hover {
   color: #ffffff;
 }

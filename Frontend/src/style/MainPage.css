@@ -16,7 +16,7 @@ body {
 .main-content {
   flex-grow: 1;
 }
-
+/* Középre igazítás */
 .text-center {
   display: flex;
   flex-direction: column;
@@ -27,19 +27,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
-
-.features-center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 20vh;
-
-  padding: 5px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-
+/*Fő tartalom*/
 .main-page {
   text-align: center;
   padding: 20px;
@@ -53,42 +41,7 @@ body {
   transition: width 0.3s ease;
 }
 
-.features {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 1.8%;
-  width: 100%;
-  padding-bottom: 2.5%;
-}
-
-.features-position {
-  margin-top: 36.6%;
-}
-
-.feature {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 20px;
-  width: 32%;
-  min-width: 250px;
-  box-shadow: 0 0 20px rgba(8, 7, 16, 0.6);
-  backdrop-filter: blur(5px);
-  text-align: left;
-  transition: width 0.3s ease;
-  height: 70%;
-}
-
-.feature h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.feature p {
-  font-size: 1rem;
-  font-weight: 300;
-}
-
+/*Footer*/
 .footer-main {
   display: flex;
   justify-content: center;
@@ -98,6 +51,7 @@ body {
   bottom: 0;
 }
 
+/*Reszponzivitás*/
 @media (max-width: 768px) {
   .footer-main {
     height: 8vh;

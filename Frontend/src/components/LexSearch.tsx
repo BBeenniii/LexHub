@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getUser } from '../utils/auth-utils';
+import { Lawyer } from '../types/LexSearch';
 import { User } from '../types/User';
 import axios from 'axios';
 import '../style/LexSearch.css';
-
-interface Lawyer {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  city: string;
-  country: string;
-}
 
 const LexSearch: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
 
+  //Állapotváltozók definiálása
   const [lawyerTypes, setLawyerTypes] = useState<{ id: number; type: string }[]>([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState<number | null>(null);
   const [locationType, setLocationType] = useState<'nearby' | 'county' | 'city'>('nearby');
@@ -30,11 +23,13 @@ const LexSearch: React.FC = () => {
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isError, setIsError] = useState<boolean | null>(null);
 
+  //Az ügyvéd típusok lekérdezése
   useEffect(() => {
     axios.get('http://localhost:3001/auth/lawyertypes').then(res => {
       setLawyerTypes(res.data);
     });
 
+    //A felhasználó adatok beállítása
     const storedUser = getUser() as User;
     if (storedUser) {
       setUser({
@@ -47,6 +42,7 @@ const LexSearch: React.FC = () => {
     }
   }, []);
 
+  //Az URL paraméter alapján beállítja a kiválasztott szakterületet és a helymeghatározás módját
   useEffect(() => {
     const sId = queryParams.get('specialtyId');
     const modeParam = queryParams.get('mode');
@@ -60,6 +56,7 @@ const LexSearch: React.FC = () => {
     }
   }, [location.search]);
 
+  //Keresés funkció
   const handleSearch = async () => {
     if (!selectedSpecialty) {
       setFeedbackMessage('Válassz szakterületet!');
@@ -74,7 +71,9 @@ const LexSearch: React.FC = () => {
 
     const query: any = { specialtyId: selectedSpecialty };
 
+    //Keresési feltételek beállítása
     try {
+      //Ha a közelben keresünk geolokáció használatával történik a keresés
       if (locationType === 'nearby') {
         if ('geolocation' in navigator) {
           navigator.geolocation.getCurrentPosition(
@@ -82,7 +81,7 @@ const LexSearch: React.FC = () => {
               const { latitude, longitude } = pos.coords;
               query.lat = latitude;
               query.lng = longitude;
-
+              
               const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
               setLawyers(res.data);
               if (res.data.length === 0) {
@@ -100,6 +99,7 @@ const LexSearch: React.FC = () => {
                 return;
               }
 
+              //Ha a geolokáció nem elérhető, akkor a felhasználó által megadott megyét használjuk
               query.county = fallbackCounty;
               const res = await axios.get('http://localhost:3001/lawyers/search', { params: query });
               setLawyers(res.data);
@@ -115,11 +115,13 @@ const LexSearch: React.FC = () => {
               maximumAge: 0
             }
           );
+          //Hibakezelés a lokációhoz
         } else {
           setFeedbackMessage('A böngésződ nem támogatja a helymeghatározást.');
           setIsError(true);
           hideFeedbackLater();
         }
+        //Megye szerinti keresés
       } else if (locationType === 'county') {
         if (!county.trim()) {
           setFeedbackMessage('Adj meg egy megyét!');
@@ -135,6 +137,7 @@ const LexSearch: React.FC = () => {
           setIsError(false);
           hideFeedbackLater();
         }
+      //Város szerinti keresés
       } else if (locationType === 'city') {
         if (!city.trim()) {
           setFeedbackMessage('Adj meg egy várost!');
@@ -151,7 +154,7 @@ const LexSearch: React.FC = () => {
           hideFeedbackLater();
         }
       }
-
+      //HIbakezelés a kereséshez
     } catch (err: any) {
       console.error('[ERROR]: Keresési hiba', err);
       setFeedbackMessage(err?.response?.data?.message || "Ismeretlen hiba történt!");
@@ -167,6 +170,7 @@ const LexSearch: React.FC = () => {
     }, 4000);
   };
 
+  //Beszélgetés indítása a kiválasztott ügyvéddel
   const handleStartChat = async (providerId: number, providerName: string) => {
     const user = getUser();
     if (!user) {
@@ -176,6 +180,7 @@ const LexSearch: React.FC = () => {
       return;
     }
   
+    //Ellenőrzés, folyik e aktív beszélgetés a felhasználó és az ügyvéd között
     try {
       const res = await fetch('http://localhost:3001/messages/start', {
         method: 'POST',

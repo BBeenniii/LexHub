@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../style/aiChat.css";
 
 function AIChat() {
+  //Állapotváltozók definiálása
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,6 +14,7 @@ function AIChat() {
 
   const navigate = useNavigate();
 
+  //Bementet feldolgozása, AI kérés küldése, validálás
   const queryAI = async () => {
     if (!input || input.trim().length < 5) {
       setFeedbackMessage("Kérlek, írj be egy hosszabb leírást a jogesetről.");
@@ -25,6 +27,7 @@ function AIChat() {
     setFeedbackMessage("");
     setIsSuccess(null);
 
+    //Post kérés küldése a backendnek
     try {
       const res = await fetch("http://localhost:3001/aiChat", {
         method: "POST",
@@ -34,6 +37,7 @@ function AIChat() {
 
       const data = await res.json();
 
+    //Az Ai válaszának feldolgozása, hiba esetén visszajelzés
       if (data?.recommendation) {
         setResponse(data.recommendation);
         await matchSpecialty(data.recommendation);
@@ -53,6 +57,7 @@ function AIChat() {
     setLoading(false);
   };
 
+  //AI válaszának feldolgozása, szakterület beazonosítása a backendből lekérdezi és megkeresi a legjobban illeszkedőt
   const matchSpecialty = async (aiResult: string) => {
     const res = await fetch("http://localhost:3001/auth/lawyertypes");
     const allTypes = await res.json();
@@ -66,12 +71,13 @@ function AIChat() {
     setMatchedSpecialty(match || null);
   };
 
+  //Szakterület kiválasztása ha van találat, navigálás a megfelelő oldalra
   const handleAccept = () => {
     if (matchedSpecialty) {
       navigate(`/lexSearch?specialtyId=${matchedSpecialty.id}&mode=nearby`);
     }
   };
-
+  //Ha nincs találat, manuális vlasztást kínál
   const handleManual = () => {
     navigate(`/lexSearch?mode=manual`);
   };

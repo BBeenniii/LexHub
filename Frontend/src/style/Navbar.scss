@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans:400,600');
 
+/*Álltalános stílusok*/
 body {
   margin: 0;
   background: #222;
@@ -13,6 +14,7 @@ body {
   background-image: url(../../public/bgImage.png);
 }
 
+/*Nabvar stílusok*/
 .navbar {
   width: 100%; 
   display: flex;
@@ -30,6 +32,7 @@ body {
   position: relative;
 }
 
+/*Navbar kinezete*/
 header {
   background: linear-gradient(100deg, #0E0B19, #58656E);
   padding: 3px;
@@ -37,7 +40,7 @@ header {
   position: relative;
   z-index: 10;
 }
-
+/*Gombok helyzete és kinézete*/
 .logo {
   padding: 10px 0;
   font-size: 24px;
@@ -127,6 +130,7 @@ nav a:hover::before {
   width: 100%;
 }
 
+/*Reszpontivitás*/
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;

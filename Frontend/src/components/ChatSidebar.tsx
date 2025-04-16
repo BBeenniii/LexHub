@@ -1,20 +1,6 @@
 import React from 'react';
+import { Conversation ,Props } from '../types/ChatSidebar';
 import "../style/Chat.css";
-
-interface Conversation {
-  id: number;
-  participant: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
-
-interface Props {
-  conversations: Conversation[];
-  selectedConv: Conversation | null;
-  onSelect: (conv: Conversation) => void;
-}
 
 const ChatSidebar: React.FC<Props> = ({ conversations, selectedConv, onSelect }) => {
   return (

@@ -9,7 +9,7 @@
 body {
   background-color: #080710;
 }
-
+/*Regisztráció visszajelzés*/
 .register-feedback {
   margin-top: 12px;
   font-weight: 500;
@@ -24,17 +24,19 @@ body {
   gap: 20px;
 }
 
+/*Regisztráció visszajelzés: sikeres*/
 .register-feedback.success {
   border-left: 6px solid #4ade80;
   border-right: 6px solid #4ade80;
 }
 
+/*Regisztráció visszajelzés: sikertelen*/
 .register-feedback.error {
   border-left: 6px solid #f87171;
   border-right: 6px solid #f87171;
 }
 
-
+/*Regisztráció teljes*/
 .register-container {
   max-width: 600px;
   width: 90%;
@@ -52,6 +54,7 @@ body {
   color: white;
 }
 
+/*Regisztració: szöveg*/
 .register-container h3 {
   font-size: 32px;
   font-weight: 500;
@@ -60,6 +63,7 @@ body {
   margin-bottom: 20px;
 }
 
+/*Mezők*/
 .register-container label {
   font-size: 16px;
   font-weight: 500;
@@ -67,6 +71,7 @@ body {
   margin-top: 10px;
 }
 
+/*Input mezők*/
 .register-container input:not([type="checkbox"]),
 .register-container select {
   height: 50px;
@@ -115,7 +120,7 @@ body {
 .register-container .buttonski:hover {
   background-color: #e0e0e0;
 }
-
+/*Checkboxok*/
 .spec-checkboxes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -140,6 +145,43 @@ option{
   color: black;
 }
 
+.spec-checkboxes {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.spec-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.spec-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: white;
+  box-shadow: 0 0 12px rgba(8, 7, 16, 0.4);
+  transition: background 0.2s ease;
+}
+
+.spec-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.spec-card input[type="checkbox"] {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: white;
+  flex-shrink: 0;
+}
+
+/*Reszponzivitás*/
 @media (max-width: 768px) {
   .register-container {
     padding: 30px 20px;
@@ -184,41 +226,4 @@ option{
     font-size: 14px;
     padding: 10px 0;
   }
-
-  .spec-checkboxes {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
 }
-
-.spec-checkboxes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    margin-top: 10px;
-  }
-  
-  .spec-card {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(6px);
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-size: 14px;
-    color: white;
-    box-shadow: 0 0 12px rgba(8, 7, 16, 0.4);
-    transition: background 0.2s ease;
-  }
-  
-  .spec-card:hover {
-    background: rgba(255, 255, 255, 0.12);
-  }
-  
-  .spec-card input[type="checkbox"] {
-    margin-right: 8px;
-    width: 18px;
-    height: 18px;
-    accent-color: white;
-    flex-shrink: 0;
-  }
-  

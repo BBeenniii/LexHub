@@ -3,7 +3,7 @@
   flex-direction: row;
   height: 100vh;
 }
-
+/*Az oldalsáv*/
 .chat-sidebar {
   width: 250px;
   padding: 20px;
@@ -13,13 +13,13 @@
   overflow-y: auto;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
 }
-
+/* Az oldalsáv fejléc */
 .chat-sidebar h4 {
   font-size: 20px;
   margin-bottom: 16px;
   color: white;
 }
-
+/* Az oldalsávban lévő kapcsolatok */
 .chat-contact {
   background: rgba(255, 255, 255, 0.1);
   padding: 12px;
@@ -36,7 +36,7 @@
 .chat-contact.active {
   background: rgba(255, 255, 255, 0.3);
 }
-
+/* Az oldalsávban lévő kapcsolatok neve */
 .chat-main {
   flex: 1;
   display: flex;
@@ -60,7 +60,7 @@
   padding-right: 10px;
   margin-bottom: 16px;
 }
-
+/* Üzenetek doboz */
 .message {
   max-width: 70%;
   padding: 12px 16px;
@@ -73,19 +73,19 @@
   backdrop-filter: blur(6px);
   color: white;
 }
-
+/* Üzenetek dobozának stílusa (én)*/
 .message-own {
   align-self: flex-end;
   background-color: #dcf8c6;
   color: #000;
 }
-
+/* Üzenetek dobozának stílusa (másik fél)*/
 .message-other {
   align-self: flex-start;
   background-color: #f1f1f1;
   color: #000;
 }
-
+/*Üzenet idő*/
 .message-time {
   font-size: 10px;
   margin-top: 6px;
@@ -99,7 +99,7 @@
   padding-top: 10px;
   gap: 10px;
 }
-
+/* Üzenet küldő mező */
 .chat-box input[type="text"] {
   flex: 1;
   padding: 12px 16px;
@@ -114,7 +114,7 @@
 .chat-box input::placeholder {
   color: #e5e5e5;
 }
-
+/* Üzenet küldő gomb */
 .chat-box button {
   background-color: #ffffff;
   color: #080710;
@@ -136,7 +136,7 @@
   color: white;
   font-size: 16px;
 }
-
+/* Üzenetek görgetése */
 .chat-sidebar::-webkit-scrollbar,
 .chat-box > div:first-child::-webkit-scrollbar {
   width: 6px;
@@ -145,45 +145,6 @@
 .chat-box > div:first-child::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-}
-
-@media (max-width: 768px) {
-  .chat-page {
-    flex-direction: column;
-  }
-
-  .chat-sidebar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .chat-contact {
-    flex: 0 0 auto;
-    min-width: 180px;
-  }
-
-  .chat-main {
-    flex: 1;
-    padding: 15px;
-  }
-
-  .message {
-    max-width: 85%;
-  }
-
-  .chat-box input[type="text"] {
-    font-size: 14px;
-  }
-
-  .chat-box button {
-    font-size: 14px;
-    padding: 10px 16px;
-  }
 }
 
 .chat-wrapper {
@@ -202,8 +163,58 @@
     border-radius: 20px;
     overflow: hidden;
   }
+  
+  /*Üzenetek input mező*/
+  .chat-input {
+    display: flex;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 0;
+    gap: 10px;
+  }
+  .chat-input input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    outline: none;
+    backdrop-filter: blur(4px);
+  }
+  
+  .chat-input input::placeholder {
+    color: #e5e5e5;
+  }
+  
+  .chat-input button {
+    background-color: #ffffff;
+    color: #080710;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .chat-input button:hover {
+    background-color: #e0e0e0;
+  }
 
-.message-container {
+  /*Üzenetek*/
+  .message {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 10px 14px;
+    border-radius: 16px;
+    max-width: 75%;
+    word-wrap: break-word;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+  .message-container {
     display: flex;
     width: 100%;
     margin-bottom: 12px;
@@ -215,11 +226,6 @@
   
   .message-container.other {
     justify-content: flex-start;
-  }
-  .chat-box {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
   }
   
   .chat-messages-scroll {
@@ -274,72 +280,7 @@
     text-align: right;
     opacity: 0.6;
   }
-  
-  .chat-input {
-    display: flex;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 10px 0;
-    gap: 10px;
-  }
-  
-  .chat-input input {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.15);
-    color: white;
-    border: none;
-    outline: none;
-    backdrop-filter: blur(4px);
-  }
-  
-  .chat-input input::placeholder {
-    color: #e5e5e5;
-  }
-  
-  .chat-input button {
-    background-color: #ffffff;
-    color: #080710;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .chat-input button:hover {
-    background-color: #e0e0e0;
-  }
 
-  @media (max-width: 768px) {
-    .message {
-      max-width: 85%;
-    }
-  
-    .chat-input input {
-      font-size: 14px;
-    }
-  
-    .chat-input button {
-      font-size: 14px;
-      padding: 10px 16px;
-    }
-  }
-  
-  .message {
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 10px 14px;
-    border-radius: 16px;
-    max-width: 75%;
-    word-wrap: break-word;
-    margin-bottom: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-  
   .message-own {
     align-self: flex-end;
     background: rgba(176, 255, 176, 0.15);
@@ -358,7 +299,6 @@
     opacity: 0.6;
     text-align: right;
   }
-  
   .message-actions-clicked {
     display: flex;
     justify-content: flex-end;
@@ -369,7 +309,7 @@
     padding-right: 12px;
     animation: fadeIn 0.2s ease-in-out;
   }  
-  
+  /* Üzenet akciók gomb stílusa */
   .message-actions-clicked button {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -380,7 +320,7 @@
     font-size: 0.85rem;
     transition: all 0.2s ease;
   }
-  
+  /* Üzenet akciók gomb hover állapotban */
   .message-actions-clicked button:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: scale(1.05);
@@ -390,23 +330,13 @@
     cursor: pointer;
   }  
   
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-3px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }  
-  
+ 
+ /* Chat input */ 
   .edited-label {
     font-size: 0.75rem;
     color: #ccc;
     margin-left: 4px;
   }
-  
   
   .edit-box {
     display: flex;
@@ -423,4 +353,70 @@
     padding: 4px 8px;
     font-size: 0.9rem;
     cursor: pointer;
+  }
+
+  /*Reszponzivitás*/
+  @media (max-width: 768px) {
+    .chat-page {
+      flex-direction: column;
+    }
+  
+    .chat-sidebar {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 10px;
+      gap: 10px;
+    }
+  
+    .chat-contact {
+      flex: 0 0 auto;
+      min-width: 180px;
+    }
+  
+    .chat-main {
+      flex: 1;
+      padding: 15px;
+    }
+  
+    .message {
+      max-width: 85%;
+    }
+  
+    .chat-box input[type="text"] {
+      font-size: 14px;
+    }
+  
+    .chat-box button {
+      font-size: 14px;
+      padding: 10px 16px;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  } 
+
+  @media (max-width: 768px) {
+    .message {
+      max-width: 85%;
+    }
+  
+    .chat-input input {
+      font-size: 14px;
+    }
+  
+    .chat-input button {
+      font-size: 14px;
+      padding: 10px 16px;
+    }
   }

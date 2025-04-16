@@ -9,6 +9,7 @@
   color: #fff;
 }
 
+/*Profil visszajelzése mező*/
 .profile-feedback {
   margin-top: 20px;
   padding: 14px 20px;
@@ -24,32 +25,35 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+/*Visszajelzés: sikeres*/
 .profile-feedback.success {
   color: #4ade80;
   border-left: 6px solid #4ade80;
   border-right: 6px solid #4ade80;
 }
 
+/*Visszajelzés: sikertelen*/
 .profile-feedback.error {
   color: #f87171;
   border-left: 6px solid #f87171;
   border-right: 6px solid #f87171;
 }
 
-
-
+/*Profil kártya*/
 .profile-card {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+/*Profil kártya mezők*/
 .profile-card label {
   font-weight: 600;
   margin-bottom: 4px;
   color: #fff;
 }
 
+/*Input mezők*/
 .profile-card input {
   padding: 12px 14px;
   border-radius: 10px;
@@ -61,11 +65,13 @@
   transition: background 0.3s;
 }
 
+
 .profile-card input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/*Gombok*/
 .profile-buttons {
   display: flex;
   justify-content: flex-end;
@@ -97,6 +103,7 @@
   font-weight: 500;
 }
 
+/*Checkboxok*/
 .spec-checkboxes {
   display: flex;
   flex-wrap: wrap;

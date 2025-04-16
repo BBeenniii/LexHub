@@ -9,7 +9,7 @@
     body {
     background-color: #080710;
     }
-
+    /*Bejelentkezés visszajezlés*/
     .login-feedback {
     margin-top: 12px;
     font-weight: 500;
@@ -23,17 +23,18 @@
     padding: 40px 30px;
     gap: 20px;
     }
-
+    /*Bejelentkezés visszajelzés: sikeres*/
     .login-feedback.success {
     border-left: 6px solid #4ade80;
     border-right: 6px solid #4ade80;
     }
-
+    /*Bejelentkezés visszajelzés: sikertelen*/
     .login-feedback.error {
         border-left: 6px solid #f87171;
         border-right: 6px solid #f87171;
     }
 
+    /*Bejelentkezés teljes*/
     .login-form {
     max-width: 600px;
     width: 90%;
@@ -73,6 +74,7 @@
         margin-bottom: 6px;
     }
 
+    /*Bejelentkezés input mezők*/
     .login-form input,
     .filter-group input,
     .filter-group select {
@@ -110,6 +112,7 @@
     background-color: #e0e0e0;
     }
 
+    /*Reszponzivitás*/
     @media (max-width: 480px) {
     .login-form {
         padding: 30px 20px;
