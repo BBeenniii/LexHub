@@ -12,7 +12,7 @@ import { RegisterProviderDto } from './dto/register-provider.dto';
 import { RegisterSeekerDto } from './dto/register-seeker.dto';
 import { UpdateSeekerDto } from './dto/update-seeker.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
-import { LocationValidatorService } from 'src/location-validator/location-validator.service';
+import { LocationValidatorService } from '../location-validator/location-validator.service';
 
 @Injectable()
 export class AuthService {

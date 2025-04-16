@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserProvider } from '../auth/entities/userProvider.entity';
 import { LawyerSearchDto } from './dto/lawyer-search.dto';
 import { LocationValidatorService } from '../location-validator/location-validator.service';
-import { LawyerType } from 'src/auth/entities/lawyerType.entity';
+import { LawyerType } from '../auth/entities/lawyerType.entity';
 
 @Injectable()
 export class LawyerSearchService {

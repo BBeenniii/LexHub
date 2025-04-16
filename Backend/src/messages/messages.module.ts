@@ -4,8 +4,8 @@ import { Message } from './entities/message.entity';
 import { Conversation } from './entities/conversation.entity';
 import { MessagesService } from './messages.service';
 import { MessagesController } from './messages.controller';
-import { UserSeeker } from 'src/auth/entities/userSeeker.entity';
-import { UserProvider } from 'src/auth/entities/userProvider.entity';
+import { UserSeeker } from '../auth/entities/userSeeker.entity';
+import { UserProvider } from '../auth/entities/userProvider.entity';
 import { MessagesDtoDocController } from './messages-dto-doc.controller';
 
 @Module({

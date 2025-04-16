@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { Conversation } from './entities/conversation.entity';
-import { UserSeeker } from 'src/auth/entities/userSeeker.entity';
-import { UserProvider } from 'src/auth/entities/userProvider.entity';
+import { UserSeeker } from '../auth/entities/userSeeker.entity';
+import { UserProvider } from '../auth/entities/userProvider.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
 
 @Injectable()

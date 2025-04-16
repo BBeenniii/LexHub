@@ -6,7 +6,7 @@ import { UserSeeker } from './entities/userSeeker.entity';
 import { UserProvider } from './entities/userProvider.entity';
 import { LawyerType } from './entities/lawyerType.entity';
 import { ConfigModule } from '@nestjs/config';
-import { LocationValidatorService } from 'src/location-validator/location-validator.service';
+import { LocationValidatorService } from '../location-validator/location-validator.service';
 
 @Module({
   imports: [

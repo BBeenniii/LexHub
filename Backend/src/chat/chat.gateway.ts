@@ -1,8 +1,8 @@
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, MessageBody, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from '../messages/messages.service';
-import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
-import { GetMessagesDto } from 'src/messages/dto/get-messages.dto';
+import { CreateMessageDto } from '../messages/dto/create-message.dto';
+import { GetMessagesDto } from '../messages/dto/get-messages.dto';
 import { EditMessageDto } from '../messages/dto/edit-message.dto';
 import { DeleteMessageDto } from '../messages/dto/delete-message.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
